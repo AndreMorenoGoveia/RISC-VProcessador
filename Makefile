@@ -15,8 +15,11 @@ ULA = $(SOMA) $(MUXAB) Componentes/ULA/ULA.v
 #MemoryData
 MD = Componentes/MemoryData/MemoryData.v
 
+#InstructionMemory
+IM = Componentes/MemoriaInstrucao/MemoriaInstrucao.v Componentes/MemoriaInstrucao/Conversor12bits64bitsCP2.v
+
 #UC
-UC = testbench.v
+UC = testbench.v $(IM)
 
 Processador = $(UC) $(BR) $(MD) $(ULA)
 

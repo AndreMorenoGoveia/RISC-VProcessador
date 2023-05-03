@@ -13,6 +13,8 @@ module testbench;
     wire [63:0] doutULA;
     reg [10:0] estado;
     reg [4:0] endr;
+    wire [31:0] instr;
+    wire [63:0] constanteMem;
 
     parameter A = 1, B = 0, C = 2;
 
@@ -249,7 +251,7 @@ module testbench;
                     /* Saídas da próxima instrução */
                     Ra = 1; // Saída doutb
                     Rb = 4; // Saída douta
-                    
+                    endr = 4; //Endereço da intrução
                     
                 end
             addi1:
@@ -259,9 +261,9 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    constante = 487;
-                    escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
+                    constante = constanteMem; // Constante da memória
+                    escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
+                    escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 0;// Declara que é uma adição
                     Rw = 5;
@@ -272,6 +274,7 @@ module testbench;
                     /* Saídas da próxima instrução */
                     Ra = 1; // Saída doutb
                     Rb = 5; // Saída douta
+                    endr = 5; //Endereço da intrução
                 end
             subi1:
                 begin
@@ -280,9 +283,9 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    constante = 23;
-                    escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
+                    constante = constanteMem; // Constante da memória
+                    escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
+                    escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 1;// Declara que é uma adição
                     Rw = 6;
@@ -320,7 +323,9 @@ module testbench;
             .subtraindo(subtraindo), .escolhe_entrada1(escolhe_entrada1), .escolhe_entrada2(escolhe_entrada2),
             .dout(doutULA));
 
-    
+    Conversor12bits64bitsCP2 conv(.entrada(instr[31:20]), .saida(constanteMem));
+
+    MemoriaInstrucao inst(.endr(endr), .clk(clk), .dout(instr));
 
 
 endmodule
