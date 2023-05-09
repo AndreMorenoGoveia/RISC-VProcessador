@@ -12,7 +12,7 @@ module testbench;
     reg [1:0] escolhe_entrada1, escolhe_entrada2;
     wire [63:0] doutULA;
     reg [10:0] estado;
-    reg [4:0] endr;
+    reg [6:0] endr;
     wire [31:0] instr;
     wire [63:0] constanteMem;
 
@@ -317,7 +317,7 @@ module testbench;
     BancoRegistradores RF(.Ra(Ra), .Rb(Rb), .clk(clk), .We(WeR), .din(dinR),
                          .Rw(Rw), .douta(douta), .doutb(doutb));
 
-    MemoryData memoria(.endr(doutULA[4:0]), .We(WeM), .din(dinM), .clk(clk), .dout(doutM));
+    MemoryData memoria(.endr(doutULA[8:0]), .We(WeM), .din(dinM), .clk(clk), .dout(doutM));
 
     ULA ula(.dina(douta), .dinb(doutb), .constante(constante), .soma_ou_subtrai(soma_ou_subtrai),
             .subtraindo(subtraindo), .escolhe_entrada1(escolhe_entrada1), .escolhe_entrada2(escolhe_entrada2),

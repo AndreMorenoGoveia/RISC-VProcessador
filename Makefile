@@ -1,25 +1,28 @@
 all: riscv exec
 
 # Banco Registradores
-Codificador = Componentes/BancoRegistradores/Codificador.v
-MUX32 = Componentes/BancoRegistradores/Mux32x64bits.v
-REG = Componentes/BancoRegistradores/Registrador.v
+Codificador = DataFlow/BancoRegistradores/Codificador.v
+MUX32 = DataFlow/BancoRegistradores/Mux32x64bits.v
+REG = DataFlow/BancoRegistradores/Registrador.v
 BRpartes = $(Codificador) $(MUX32) $(REG)
-BR = Componentes/BancoRegistradores/BancoRegistradores.v $(BRpartes)
+BR = DataFlow/BancoRegistradores/BancoRegistradores.v $(BRpartes)
 
 #ULA
-SOMA = Componentes/ULA/SomadorSubtrator.v
-MUXAB = Componentes/ULA/MuxAB.v
-ULA = $(SOMA) $(MUXAB) Componentes/ULA/ULA.v
+SOMA = DataFlow/ULA/SomadorSubtrator.v
+MUXAB = DataFlow/ULA/MuxAB.v
+FLAGS = DataFlow/ULA/Flags.v
+ULA = $(SOMA) $(MUXAB) $(FLAGS) DataFlow/ULA/ULA.v
 
 #MemoryData
-MD = Componentes/MemoryData/MemoryData.v
+MD = DataFlow/MemoryData/MemoryData.v
 
 #InstructionMemory
-IM = Componentes/MemoriaInstrucao/MemoriaInstrucao.v Componentes/MemoriaInstrucao/Conversor12bits64bitsCP2.v
+IR = DataFlow/MemoriaInstrucao/RegistradorInstrucao.v
+CONV = DataFlow/MemoriaInstrucao/Conversor12bits64bitsCP2.v
+IM = $(CONV) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #UC
-UC = testbench.v $(IM)
+UC = UC.v $(IM)
 
 Processador = $(UC) $(BR) $(MD) $(ULA)
 
