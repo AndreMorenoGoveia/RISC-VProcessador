@@ -22,7 +22,7 @@ CONV = DataFlow/MemoriaInstrucao/Conversor12bits64bitsCP2.v
 IM = $(CONV) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #UC
-UC = UC.v $(IM)
+UC = testbench.v $(IM)
 
 Processador = $(UC) $(BR) $(MD) $(ULA)
 
