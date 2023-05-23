@@ -1,0 +1,281 @@
+
+
+def decimal_binario_12bits(decimal):
+    if decimal >= 0:
+        binario = bin(decimal)[2:].zfill(12)  
+    else:
+        binario = bin(decimal & 0xFFF)[2:]      
+    return binario
+
+def decimal_binario_13bits(decimal):
+    if decimal >= 0:
+        binario = bin(decimal)[2:].zfill(13)  
+    else:
+        binario = bin(decimal & 0b1111111111111)[2:]      
+    return binario
+
+def decimal_binario_20bits(decimal):
+    if decimal >= 0:
+        binario = bin(decimal)[2:].zfill(20)  
+    else:
+        binario = bin(decimal & 0b11111111111111111111)[2:]      
+    return binario
+
+class loadword:
+
+    # lw rd, #const(rs1)
+    # lw x2, #67(x0)
+
+    rd = 2
+    rs1 = 0
+    const = -67
+
+
+
+    upcode = "0000011"
+    funct3 = "010"
+
+
+    def faz_instrucao():
+        instrucao = "32'b" + decimal_binario_12bits(loadword.const) + bin(loadword.rs1)[2:].zfill(5) + loadword.funct3 + bin(loadword.rd)[2:].zfill(5) + loadword.upcode
+        print(instrucao)
+
+class storeword:
+
+    # sw rs1, #const(rs2)
+    # sw x2, #67(x0)
+
+    rs1 = 2
+    rs2 = 0
+    const = 67
+
+
+
+    upcode = "0100011"
+    funct3 = "010"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_12bits(storeword.const)
+        instrucao = "32'b" + imm[5:12] + bin(storeword.rs2)[2:].zfill(5) + bin(storeword.rs1)[2:].zfill(5) + storeword.funct3 + imm[0:5] + storeword.upcode
+        print(instrucao)
+
+
+class add:
+
+    # rd = rs1 + rs2
+    # add rd, rs1, rs2
+    # add x4, x2, x0
+
+    rd = 4
+    rs1 = 2
+    rs2 = 0
+    const = 67
+
+
+
+    upcode = "0110011"
+    funct3 = "000"
+    funct7 = "0000000"
+
+
+    def faz_instrucao():
+        instrucao = "32'b" + add.funct7 + bin(add.rs2)[2:].zfill(5) + bin(add.rs1)[2:].zfill(5) + add.funct3 + bin(add.rd)[2:].zfill(5) + add.upcode
+        print(instrucao)
+
+class sub:
+
+    # rd = rs1 - rs2
+    # sub rd, rs1, rs2
+    # sub x4, x2, x0
+
+    rd = 4
+    rs1 = 2
+    rs2 = 0
+    const = 67
+
+
+
+    upcode = "0110011"
+    funct3 = "000"
+    funct7 = "0100000"
+
+
+    def faz_instrucao():
+        instrucao = "32'b" + sub.funct7 + bin(sub.rs2)[2:].zfill(5) + bin(sub.rs1)[2:].zfill(5) + sub.funct3 + bin(sub.rd)[2:].zfill(5) + sub.upcode
+        print(instrucao)
+
+
+class addi:
+    # rd = rs1 + const
+    # addi rd, rs1, #const
+    # addi x4, x2, #67
+
+    rd = 4
+    rs1 = 2
+    const = 67
+
+
+
+    upcode = "0010011"
+    funct3 = "000"
+
+
+    def faz_instrucao():
+        instrucao = "32'b" + decimal_binario_12bits(addi.const) + bin(addi.rs1)[2:].zfill(5) + addi.funct3 + bin(addi.rd)[2:].zfill(5) + addi.upcode
+        print(instrucao)
+
+class beq:
+    # if(rs1 == rs2) vai para PC+64
+    # beq rs1, rs2, #const
+    # beq x4, x2, #64
+
+    rs1 = 4
+    rs2 = 2
+    const = 64
+
+
+
+    upcode = "1100011"
+    funct3 = "000"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_13bits(beq.const)
+        instrucao = "32'b" + imm[12] + imm[5:11] + bin(beq.rs2)[2:].zfill(5) + bin(beq.rs1)[2:].zfill(5) + beq.funct3 + imm[1:5] + imm[11] + beq.upcode
+        print(instrucao)
+
+class bne:
+    # if(rs1 != rs2) vai para PC+64
+    # bne rs1, rs2, #const
+    # bne x4, x2, #64
+
+    rs1 = 4
+    rs2 = 2
+    const = 64
+
+
+
+    upcode = "1100011"
+    funct3 = "001"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_13bits(bne.const)
+        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bne.rs2)[2:].zfill(5) + bin(bne.rs1)[2:].zfill(5) + bne.funct3 + imm[1:5] + imm[11] + bne.upcode
+        print(instrucao)
+
+
+class blt:
+    # if(rs1 < rs2) vai para PC+64
+    # blt rs1, rs2, #const
+    # blt x4, x2, #64
+
+    rs1 = 4
+    rs2 = 2
+    const = 64
+
+
+
+    upcode = "1100011"
+    funct3 = "001"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_13bits(blt.const)
+        instrucao = "32'b" + imm[12] + imm[5:11] + bin(blt.rs2)[2:].zfill(5) + bin(blt.rs1)[2:].zfill(5) + blt.funct3 + imm[1:5] + imm[11] + blt.upcode
+        print(instrucao)
+
+
+class bge:
+    # if(rs1 >= rs2) vai para PC+64
+    # bge rs1, rs2, #const
+    # bge x4, x2, #64
+
+    rs1 = 4
+    rs2 = 2
+    const = 64
+
+
+
+    upcode = "1100011"
+    funct3 = "101"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_13bits(bge.const)
+        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bge.rs2)[2:].zfill(5) + bin(bge.rs1)[2:].zfill(5) + bge.funct3 + imm[1:5] + imm[11] + bge.upcode
+        print(instrucao)
+
+
+class bltu:
+    # if(rs1 < rs2) vai para PC+64
+    # bltu rs1, rs2, #const
+    # bltu x4, x2, #64
+
+    rs1 = 4
+    rs2 = 2
+    const = 64
+
+
+
+    upcode = "1100011"
+    funct3 = "110"
+
+
+    def faz_instrucao():
+        imm = bin(bltu.const)[2:].zfill(13)
+        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bltu.rs2)[2:].zfill(5) + bin(bltu.rs1)[2:].zfill(5) + bltu.funct3 + imm[1:5] + imm[11] + bltu.upcode
+        print(instrucao)
+
+class bgeu:
+    # if(rs1 >= rs2) vai para PC+64
+    # bgeu rs1, rs2, #const
+    # bgeu x4, x2, #64
+
+    rs1 = 4
+    rs2 = 2
+    const = 64
+
+
+
+    upcode = "1100011"
+    funct3 = "111"
+
+
+    def faz_instrucao():
+        imm = bin(bgeu.const)[2:].zfill(13)
+        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bgeu.rs2)[2:].zfill(5) + bin(bgeu.rs1)[2:].zfill(5) + bgeu.funct3 + imm[1:5] + imm[11] + bgeu.upcode
+        print(instrucao)
+
+
+class auipc:
+    # rd = PC + {const, 12'b0}
+    # auipc rd, #const
+    # auipc x4, #1
+
+    rd = 4
+    const = 1
+
+
+
+    upcode = "0010111"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_20bits(auipc.const)
+        instrucao = "32'b" + imm + bin(auipc.rd)[2:].zfill(5) + auipc.upcode
+        print(instrucao)
+
+
+
+loadword.faz_instrucao()
+storeword.faz_instrucao()
+add.faz_instrucao()
+sub.faz_instrucao()
+addi.faz_instrucao()
+blt.faz_instrucao()
+bge.faz_instrucao()
+beq.faz_instrucao()
+bne.faz_instrucao()
+auipc.faz_instrucao()
