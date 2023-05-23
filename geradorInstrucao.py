@@ -21,6 +21,13 @@ def decimal_binario_20bits(decimal):
         binario = bin(decimal & 0b11111111111111111111)[2:]      
     return binario
 
+def decimal_binario_21bits(decimal):
+    if decimal >= 0:
+        binario = bin(decimal)[2:].zfill(21)  
+    else:
+        binario = bin(decimal & 0b111111111111111111111)[2:]      
+    return binario
+
 class loadword:
 
     # lw rd, #const(rs1)
@@ -267,6 +274,48 @@ class auipc:
         instrucao = "32'b" + imm + bin(auipc.rd)[2:].zfill(5) + auipc.upcode
         print(instrucao)
 
+class jal:
+    # rd = PC + 4
+    # PC = PC + {const, 1'b0}
+    # jal rd, #const
+    # jal x4, #64
+
+    rd = 4
+    const = 64
+
+
+
+    upcode = "1101111"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_21bits(jal.const)
+        instrucao = "32'b" + imm[20] + imm[1:11] + imm[11] + imm[12:20] + bin(jal.rd)[2:].zfill(5) + jal.upcode
+        print(instrucao)
+
+
+class jalr:
+    # rd = PC + 4
+    # PC = rs1 + const
+    # jalr rd, rs1, #const
+    # jalr x4, x12, #64
+
+    rd = 4
+    rs1 = 12
+    const = 64
+
+
+
+    upcode = "1100111"
+    funct3 = "000"
+
+
+    def faz_instrucao():
+        imm = decimal_binario_12bits(jalr.const)
+        instrucao = "32'b" + imm + bin(jalr.rs1)[2:].zfill(5) + jalr.funct3 + bin(jalr.rd)[2:].zfill(5) + jalr.upcode
+        print(instrucao)
+
+
 
 
 loadword.faz_instrucao()
@@ -279,3 +328,5 @@ bge.faz_instrucao()
 beq.faz_instrucao()
 bne.faz_instrucao()
 auipc.faz_instrucao()
+jal.faz_instrucao()
+jalr.faz_instrucao()
