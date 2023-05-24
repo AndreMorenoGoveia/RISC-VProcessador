@@ -20,7 +20,9 @@ MD = DataFlow/MemoryData/MemoryData.v
 IR = DataFlow/MemoriaInstrucao/RegistradorInstrucao.v
 I = DataFlow/MemoriaInstrucao/Conversores/ImediatoI.v
 J = DataFlow/MemoriaInstrucao/Conversores/ImediatoJ.v
-CONV = $(I) $(J)
+U = DataFlow/MemoriaInstrucao/Conversores/ImediatoU.v
+B = DataFlow/MemoriaInstrucao/Conversores/ImediatoB.v
+CONV = $(I) $(J) $(U) $(B)
 IM = $(CONV) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #UC

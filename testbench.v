@@ -32,6 +32,8 @@ module testbench;
     /* Imediatos */
     wire [63:0] imediato_I;
     wire [63:0] imediato_J;
+    wire [63:0] imediato_U;
+    wire [63:0] imediato_B;
 
 
     /* clock */
@@ -346,6 +348,10 @@ module testbench;
     ImediatoI conv1(.instr(instr), .saida(imediato_I));
 
     ImediatoJ conv2(.instr(instr), .saida(imediato_J));
+
+    ImediatoU conv3(.instr(instr), .saida(imediato_U));
+
+    ImediatoB conv4(.instr(instr), .saida(imediato_B));
 
 
 endmodule
