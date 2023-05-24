@@ -25,8 +25,11 @@ B = DataFlow/MemoriaInstrucao/Conversores/ImediatoB.v
 CONV = $(I) $(J) $(U) $(B)
 IM = $(CONV) $(IR) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
+#PC
+PC = DataFlow/ProgramCounter/ProgramCounter.v DataFlow/ProgramCounter/ULAPC.v
+
 #UC
-UC = testbench.v $(IM)
+UC = testbench.v $(IM) $(PC)
 
 Processador = $(UC) $(BR) $(MD) $(ULA)
 

@@ -3,12 +3,11 @@ module ProgramCounter(clk, din, dout);
 input clk;
 
 input [63:0] din;
-reg [63:0] PC;
-output [63:0] dout;
+output reg [63:0] dout;
 
-always @ (posedge clk) PC <= din;
+always @ (posedge clk) dout <= din;
 
-initial PC <= 0;
+initial dout <= 0;
 
 
 endmodule

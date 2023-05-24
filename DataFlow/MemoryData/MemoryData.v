@@ -11,8 +11,6 @@ output [BITS-1:0] dout;
 
 reg [BITS-1:0] memoria [0:DEPTH-1];
 
-assign addr = {endr,2'b0};
-
 assign dout = memoria[endr];
 
 

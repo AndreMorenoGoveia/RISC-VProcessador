@@ -24,9 +24,9 @@ module testbench;
     wire [63:0] doutULA;
 
     /* Program counter */
-
-    
-    reg [6:0] endr;
+    reg [63:0] constantePC;
+    wire [63:0] doutULAPC, doutPC;
+    reg escolhe_constantePC;
 
     /* IntructionMemory */
     wire [31:0] instrTemp;
@@ -49,6 +49,7 @@ module testbench;
         $dumpvars(0, testbench);
         estado <= inicio;
         clk <= 0;
+        escolhe_constantePC <= 0;
         #10000
         $finish;
 
@@ -74,54 +75,11 @@ module testbench;
         begin
             case (estado)
                 inicio:
-                    begin
-                        estado <= loadInicialparte1;
-                    end
-                loadInicialparte1:
-                    begin
-                        estado <= loadInicialparte2;
-                    end
-                loadInicialparte2:
-                    begin
-                        estado <= fim;
-                    end
- 
-                load2parte1:
-                    begin
-                        estado <= load2parte2;
-                    end
-                load2parte2:
-                    begin
-                        estado <= load3parte1;
-                    end
-                load3parte1:
-                    begin
-                        estado <= load3parte2;
-                    end
-                load3parte2:
-                    begin
-                        estado <= store1;
-                    end
-                store1:
-                    begin
-                        estado <= add1;
-                    end
-                add1:
-                    begin
-                        estado <= sub1;
-                    end
-                sub1:
-                    begin
-                        estado <= addi1;
-                    end
-                addi1:
-                    begin
-                        estado <= subi1;
-                    end
-                subi1:
-                    begin
-                        estado <= fim;
-                    end
+                    estado <= auipc;
+                auipc:
+                    estado <= jalr;
+                jalr:
+                    estado <= fim;
 
 
             endcase
@@ -134,197 +92,45 @@ module testbench;
                 begin
                     
                 end
-            loadInicialparte1:
+
+            auipc:
                 begin
-                    /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    /* Carregando o imediato 0 para x0 */
-                    Rw = 0;
-                    dinR = 0;
-                    Ra = 0;
+                    // x4 = PC + 4196
+                    $display("PC eh igual a %d", doutPC);
+                    Rw = 4;
+                    Ra = 4;
+                    #1
+                    dinR = doutPC + imediato_U;
                     WeR = 1;
-
                     
+
                 end
-            loadInicialparte2:
+
+            jalr:
                 begin
                     WeR = 0;
-                    $display("O valor em x0 eh %d", $signed(douta));
-
-                    /* Saídas da próxima instrução */
-                    // Rb = 0; // Saída doutb
-                    // Ra = 1; // Saída douta
-                end
-            load2parte1:
-                begin
-                    $display("O numero em x0 eh %d", $signed(doutb));
-                    /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    /* Carregando da memória 1 (lw x1, #1(x0)) */
-                    Rw = 1; // Registrador a ser escrito x1
-                    constanteULA = 1; // Constante para o endereço da memória
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 0;// Declara que é uma adição
-                    //escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = B; // Deixa o doutb como segunda entrada da ULA
-
-                end
-
-            load2parte2:
-                begin
-                    dinR = doutM; // Entrada do banco de registradores vinda da memória
-                    WeR = 1; // Habilitando a escrita no registrador
-
-                    /* Saídas da próxima instrução */
-                    Rb = 0; // Saída doutb
-                    Ra = 2; // Saída douta
-                end
-            
-            load3parte1:
-                begin
-                    $display("O numero em x1 eh %d", $signed(doutM));
-                    /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    /* Carregando da memória 1 (lw x1, #1(x0)) */
-                    Rw = 2; // Registrador a ser escrito x1
-                    constanteULA = 2; // Constante para o endereço da memória
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 0;// Declara que é uma adição
-                    //escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = B; // Deixa o doutb como segunda entrada da ULA
-
-                end
-
-            load3parte2:
-                begin
-                    dinR = doutM; // Entrada do banco de registradores vinda da memória
-                    WeR = 1; // Habilitando a escrita no registrador
-
-                    /* Saídas da próxima instrução */
-                    Rb = 0; // Saída doutb
-                    Ra = 1; // Saída douta
-                end
-            
-            store1:
-                begin
-                    $display("O numero em x2 eh %d", $signed(doutM));
-                    /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    /* Carregando na memoria 5 (sw x1, #5(x0)) */
-                    constanteULA = 5; // Endereço da memória
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 0;// Declara que é uma adição
-                    //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
-                    dinM = douta; //Altera a entrada da memória
-                    WeM = 1; //Habilitando a escrita na memória
-
-                    /* Saídas da próxima instrução */
-                    Ra = 1; // Saída doutb
-                    Rb = 2; // Saída douta
-                end
-            add1:
-                begin
-                    $display("O numero na memoria 5 eh %d", $signed(doutM));
-                    /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    //escolhe_entrada1 = A; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 0;// Declara que é uma adição
-                    Rw = 3;
                     #1
-                    dinR = doutULA;
-                    WeR = 1;
-                   
-                    /* Saídas da próxima instrução */
-                    Ra = 1; // Saída doutb
-                    Rb = 3; // Saída douta
-
-                    
-                end
-            sub1:
-                begin
-                    
-                    $display("O numero em x3 eh %d", $signed(doutb));
-                    /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    //escolhe_entrada1 = A; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 1;// Declara que é uma subtração
-                    Rw = 4;
-                    #1
-                    dinR = doutULA;
-                    WeR = 1;
-                   
-                    /* Saídas da próxima instrução */
-                    Ra = 1; // Saída doutb
-                    Rb = 4; // Saída douta
-                    endr = 4; //Endereço da intrução
-                    
-                end
-            addi1:
-                begin
-                    $display("O numero em x4 eh %d", $signed(doutb));
-                     /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    //constanteULA = constanteMem; // Constante da memória
-                    //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 0;// Declara que é uma adição
+                    // x5 = PC, PC = PC + x4 + 64
                     Rw = 5;
+                    Rb = 5;
+                    dinR = doutPC;
                     #1
-                    dinR = doutULA;
                     WeR = 1;
-                   
-                    /* Saídas da próxima instrução */
-                    Ra = 1; // Saída doutb
-                    Rb = 5; // Saída douta
-                    endr = 5; //Endereço da intrução
-                end
-            subi1:
-                begin
-                    $display("O numero em x5 eh %d", $signed(doutb));
-                     /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-
-                    //constanteULA = constanteMem; // Constante da memória
-                    //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
-                    //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 1;// Declara que é uma adição
-                    Rw = 6;
-                    #1
-                    dinR = doutULA;
-                    WeR = 1;
-                   
-                    /* Saídas da próxima instrução */
-                    Ra = 1; // Saída doutb
-                    Rb = 6; // Saída douta
-                end
+                    escolhe_constantePC = 1;
+                    constantePC = imediato_I + douta;
+        
+                    
+                end    
+            
             fim:
                 begin
-                    $display("O valor em x0 eh %d", $signed(douta));
+                    $display("O valor em x4 eh %d", $signed(douta));
+                    $display("O valor em x5 eh %d", $signed(doutb));
+                    $display("O valor em PC eh %d", $signed(doutPC));
                      /* Resetando os habilitadores */
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
+                    escolhe_constantePC = 0;
                 end
 
         endcase
@@ -346,9 +152,9 @@ module testbench;
 
     
 
-    MemoriaInstrucao instrM(.endr(endr), .clk(clk), .dout(instrTemp));
+    MemoriaInstrucao instrM(.endr(doutPC[7:3]), .clk(clk), .dout(instr));
 
-    RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
+    //RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
 
     ImediatoI conv1(.instr(instr), .saida(imediato_I));
 
@@ -357,6 +163,10 @@ module testbench;
     ImediatoU conv3(.instr(instr), .saida(imediato_U));
 
     ImediatoB conv4(.instr(instr), .saida(imediato_B));
+
+    ULAPC ulapc(.din(doutPC), .constante(constantePC), .escolhe_constante(escolhe_constantePC), .dout(doutULAPC));
+
+    ProgramCounter PC(.clk(clk), .din(doutULAPC), .dout(doutPC));
 
 
 endmodule

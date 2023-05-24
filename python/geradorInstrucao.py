@@ -262,7 +262,7 @@ class auipc:
     # auipc x4, #1
 
     rd = 4
-    const = 1
+    const = 1 #8192
 
 
 
@@ -317,16 +317,5 @@ class jalr:
 
 
 
-
-loadword.faz_instrucao()
-storeword.faz_instrucao()
-add.faz_instrucao()
-sub.faz_instrucao()
-addi.faz_instrucao()
-blt.faz_instrucao()
-bge.faz_instrucao()
-beq.faz_instrucao()
-bne.faz_instrucao()
-auipc.faz_instrucao()
-jal.faz_instrucao()
 jalr.faz_instrucao()
+
