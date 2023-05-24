@@ -8,5 +8,7 @@ output [63:0] dout;
 
 always @ (posedge clk) PC <= din;
 
+initial PC <= 0;
+
 
 endmodule

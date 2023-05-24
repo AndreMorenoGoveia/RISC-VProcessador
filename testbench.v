@@ -2,21 +2,34 @@
 
 module testbench;
 
-    reg [4:0] Ra, Rb, Rw;
-    reg WeR, WeM;
     reg clk;
-    reg [63:0] dinR, dinM, constante;
-    wire [63:0] douta, doutb, doutM;
+    reg [10:0] estado;
+
+    /* BancoRegistradores */
+    reg [4:0] Ra, Rb, Rw;
+    reg [63:0] dinR;
+    reg WeR;
+    wire [63:0] douta, doutb;
+
+    /* DataMemory */
+    reg [63:0] dinM;
+    wire [63:0] doutM;
+    reg WeM;
+
+    /* ULA */
     reg soma_ou_subtrai;
     reg subtraindo;
-    reg [1:0] escolhe_entrada1, escolhe_entrada2;
+    reg imediato;
+    reg [63:0] constanteULA;
     wire [63:0] doutULA;
-    reg [10:0] estado;
+
+    /* Program counter */
+
+    
     reg [6:0] endr;
     wire [31:0] instr;
     wire [63:0] constanteMem;
 
-    parameter A = 1, B = 0, C = 2;
 
     /* clock */
     always #5 clk = ~clk;
@@ -43,7 +56,10 @@ module testbench;
     sub1 = 200,
     subi1 = 250,
     addi1 = 300,
-    fim = 350;
+    jal = 350,
+    jalr = 400,
+    auipc = 450,
+    fim = 500;
 
     /* Maquina de estados */
     always @ (posedge clk)
@@ -59,7 +75,7 @@ module testbench;
                     end
                 loadInicialparte2:
                     begin
-                        estado <= load2parte1;
+                        estado <= fim;
                     end
  
                 load2parte1:
@@ -116,24 +132,22 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    /* Carregando da memoria 0 para x0 */
-                    constante = 0; // Constante para o endereço
-                    soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
-                    subtraindo = 0;// Declara que é uma adição
-                    escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = C; // Deixa a constante na segunda entrada da ULA
-                    Rw = 0; //Registrador a ser editado
-                    Ra = 0; //Registrador a ser lido
+                    /* Carregando o imediato 0 para x0 */
+                    Rw = 0;
+                    dinR = 0;
+                    Ra = 0;
+                    WeR = 1;
+
                     
                 end
             loadInicialparte2:
                 begin
-                    dinR = doutM; //Entrada registrador
-                    WeR = 1; // Habilitando a escrita no registrador
+                    WeR = 0;
+                    $display("O valor em x0 eh %d", $signed(douta));
 
                     /* Saídas da próxima instrução */
-                    Rb = 0; // Saída doutb
-                    Ra = 1; // Saída douta
+                    // Rb = 0; // Saída doutb
+                    // Ra = 1; // Saída douta
                 end
             load2parte1:
                 begin
@@ -144,11 +158,11 @@ module testbench;
 
                     /* Carregando da memória 1 (lw x1, #1(x0)) */
                     Rw = 1; // Registrador a ser escrito x1
-                    constante = 1; // Constante para o endereço da memória
+                    constanteULA = 1; // Constante para o endereço da memória
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 0;// Declara que é uma adição
-                    escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = B; // Deixa o doutb como segunda entrada da ULA
+                    //escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = B; // Deixa o doutb como segunda entrada da ULA
 
                 end
 
@@ -171,11 +185,11 @@ module testbench;
 
                     /* Carregando da memória 1 (lw x1, #1(x0)) */
                     Rw = 2; // Registrador a ser escrito x1
-                    constante = 2; // Constante para o endereço da memória
+                    constanteULA = 2; // Constante para o endereço da memória
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 0;// Declara que é uma adição
-                    escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = B; // Deixa o doutb como segunda entrada da ULA
+                    //escolhe_entrada1 = C; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = B; // Deixa o doutb como segunda entrada da ULA
 
                 end
 
@@ -197,11 +211,11 @@ module testbench;
                     WeM = 0; //Desabilitando a escrita na memória
 
                     /* Carregando na memoria 5 (sw x1, #5(x0)) */
-                    constante = 5; // Endereço da memória
+                    constanteULA = 5; // Endereço da memória
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 0;// Declara que é uma adição
-                    escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
+                    //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     dinM = douta; //Altera a entrada da memória
                     WeM = 1; //Habilitando a escrita na memória
 
@@ -216,8 +230,8 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    escolhe_entrada1 = A; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
+                    //escolhe_entrada1 = A; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 0;// Declara que é uma adição
                     Rw = 3;
@@ -239,8 +253,8 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    escolhe_entrada1 = A; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
+                    //escolhe_entrada1 = A; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = B; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 1;// Declara que é uma subtração
                     Rw = 4;
@@ -261,9 +275,9 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    constante = constanteMem; // Constante da memória
-                    escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
+                    constanteULA = constanteMem; // Constante da memória
+                    //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 0;// Declara que é uma adição
                     Rw = 5;
@@ -283,9 +297,9 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    constante = constanteMem; // Constante da memória
-                    escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
-                    escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
+                    constanteULA = constanteMem; // Constante da memória
+                    //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
+                    //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
                     subtraindo = 1;// Declara que é uma adição
                     Rw = 6;
@@ -299,7 +313,7 @@ module testbench;
                 end
             fim:
                 begin
-                    $display("O numero em x6 eh %d", $signed(doutb));
+                    $display("O valor em x0 eh %d", $signed(douta));
                      /* Resetando os habilitadores */
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
@@ -317,11 +331,10 @@ module testbench;
     BancoRegistradores RF(.Ra(Ra), .Rb(Rb), .clk(clk), .We(WeR), .din(dinR),
                          .Rw(Rw), .douta(douta), .doutb(doutb));
 
-    MemoryData memoria(.endr(doutULA[8:0]), .We(WeM), .din(dinM), .clk(clk), .dout(doutM));
+    MemoryData memoria(.endr(doutULA[7:3]), .We(WeM), .din(dinM), .clk(clk), .dout(doutM));
 
-    ULA ula(.dina(douta), .dinb(doutb), .constante(constante), .soma_ou_subtrai(soma_ou_subtrai),
-            .subtraindo(subtraindo), .escolhe_entrada1(escolhe_entrada1), .escolhe_entrada2(escolhe_entrada2),
-            .dout(doutULA));
+    ULA ula(.dina(douta), .dinb(doutb), .constante(constanteULA), .soma_ou_subtrai(soma_ou_subtrai),
+            .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA));
 
     Conversor12bits64bitsCP2 conv(.entrada(instr[31:20]), .saida(constanteMem));
 

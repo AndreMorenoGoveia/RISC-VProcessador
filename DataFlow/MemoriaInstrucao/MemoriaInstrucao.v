@@ -4,7 +4,7 @@ module MemoriaInstrucao #(parameter BITS = 32, parameter DEPTH = 32)
 
 input [6:0] endr;
 input clk;
-output [BITS*4-1:0] dout;
+output [BITS-1:0] dout;
 
 
 reg [BITS-1:0] memoria [0:DEPTH-1];

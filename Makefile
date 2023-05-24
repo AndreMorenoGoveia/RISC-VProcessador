@@ -9,7 +9,7 @@ BR = DataFlow/BancoRegistradores/BancoRegistradores.v $(BRpartes)
 
 #ULA
 SOMA = DataFlow/ULA/SomadorSubtrator.v
-MUXAB = DataFlow/ULA/MuxAB.v
+MUXAB = DataFlow/ULA/MuxBC.v
 FLAGS = DataFlow/ULA/Flags.v
 ULA = $(SOMA) $(MUXAB) $(FLAGS) DataFlow/ULA/ULA.v
 
@@ -18,7 +18,7 @@ MD = DataFlow/MemoryData/MemoryData.v
 
 #InstructionMemory
 IR = DataFlow/MemoriaInstrucao/RegistradorInstrucao.v
-CONV = DataFlow/MemoriaInstrucao/Conversor12bits64bitsCP2.v
+CONV = DataFlow/MemoriaInstrucao/Conversores/Conversor12bits64bitsCP2.v
 IM = $(CONV) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #UC
