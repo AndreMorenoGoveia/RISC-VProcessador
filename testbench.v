@@ -27,6 +27,9 @@ module testbench;
 
     
     reg [6:0] endr;
+
+    /* IntructionMemory */
+    wire [31:0] instrTemp;
     wire [31:0] instr;
 
     /* Imediatos */
@@ -343,7 +346,9 @@ module testbench;
 
     
 
-    MemoriaInstrucao inst(.endr(endr), .clk(clk), .dout(instr));
+    MemoriaInstrucao instrM(.endr(endr), .clk(clk), .dout(instrTemp));
+
+    RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
 
     ImediatoI conv1(.instr(instr), .saida(imediato_I));
 

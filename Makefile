@@ -23,7 +23,7 @@ J = DataFlow/MemoriaInstrucao/Conversores/ImediatoJ.v
 U = DataFlow/MemoriaInstrucao/Conversores/ImediatoU.v
 B = DataFlow/MemoriaInstrucao/Conversores/ImediatoB.v
 CONV = $(I) $(J) $(U) $(B)
-IM = $(CONV) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
+IM = $(CONV) $(IR) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #UC
 UC = testbench.v $(IM)
