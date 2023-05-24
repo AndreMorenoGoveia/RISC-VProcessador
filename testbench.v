@@ -28,7 +28,9 @@ module testbench;
     
     reg [6:0] endr;
     wire [31:0] instr;
-    wire [63:0] constanteMem;
+
+    /* Imediatos */
+    wire [63:0] imediato_I;
 
 
     /* clock */
@@ -275,7 +277,7 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    constanteULA = constanteMem; // Constante da memória
+                    //constanteULA = constanteMem; // Constante da memória
                     //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
                     //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
@@ -297,7 +299,7 @@ module testbench;
                     WeR = 0; //Desabilitando a escrita no registrador
                     WeM = 0; //Desabilitando a escrita na memória
 
-                    constanteULA = constanteMem; // Constante da memória
+                    //constanteULA = constanteMem; // Constante da memória
                     //escolhe_entrada1 = B; // Deixa a constante na primeira entrada da ULA
                     //escolhe_entrada2 = C; // Deixa o douta como segunda entrada da ULA
                     soma_ou_subtrai = 1; // Declara que é uma adição ou uma subtração
@@ -336,7 +338,7 @@ module testbench;
     ULA ula(.dina(douta), .dinb(doutb), .constante(constanteULA), .soma_ou_subtrai(soma_ou_subtrai),
             .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA));
 
-    Conversor12bits64bitsCP2 conv(.entrada(instr[31:20]), .saida(constanteMem));
+    ImediatoI conv(.instr(instr), .saida(imediato_I));
 
     MemoriaInstrucao inst(.endr(endr), .clk(clk), .dout(instr));
 

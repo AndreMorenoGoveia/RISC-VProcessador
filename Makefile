@@ -18,7 +18,7 @@ MD = DataFlow/MemoryData/MemoryData.v
 
 #InstructionMemory
 IR = DataFlow/MemoriaInstrucao/RegistradorInstrucao.v
-CONV = DataFlow/MemoriaInstrucao/Conversores/Conversor12bits64bitsCP2.v
+CONV = DataFlow/MemoriaInstrucao/Conversores/ImediatoI.v
 IM = $(CONV) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #UC
