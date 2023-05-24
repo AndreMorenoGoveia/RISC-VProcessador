@@ -31,6 +31,7 @@ module testbench;
 
     /* Imediatos */
     wire [63:0] imediato_I;
+    wire [63:0] imediato_J;
 
 
     /* clock */
@@ -338,9 +339,13 @@ module testbench;
     ULA ula(.dina(douta), .dinb(doutb), .constante(constanteULA), .soma_ou_subtrai(soma_ou_subtrai),
             .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA));
 
-    ImediatoI conv(.instr(instr), .saida(imediato_I));
+    
 
     MemoriaInstrucao inst(.endr(endr), .clk(clk), .dout(instr));
+
+    ImediatoI conv1(.instr(instr), .saida(imediato_I));
+
+    ImediatoJ conv2(.instr(instr), .saida(imediato_J));
 
 
 endmodule
