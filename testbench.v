@@ -40,7 +40,7 @@ module testbench;
 
 
     /* clock */
-    always #5 clk = ~clk;
+    always #500 clk = ~clk;
 
     initial 
     begin 
@@ -50,7 +50,7 @@ module testbench;
         estado <= inicio;
         clk <= 0;
         escolhe_constantePC <= 0;
-        #10000
+        #1000000
         $finish;
 
 
@@ -79,6 +79,8 @@ module testbench;
                 auipc:
                     estado <= jalr;
                 jalr:
+                    estado <= jal;
+                jal:
                     estado <= fim;
 
 
@@ -99,7 +101,7 @@ module testbench;
                     $display("PC eh igual a %d", doutPC);
                     Rw = 4;
                     Ra = 4;
-                    #1
+                    #2
                     dinR = doutPC + imediato_U;
                     WeR = 1;
                     
@@ -114,18 +116,36 @@ module testbench;
                     Rw = 5;
                     Rb = 5;
                     dinR = doutPC;
-                    #1
+                    #2
                     WeR = 1;
                     escolhe_constantePC = 1;
                     constantePC = imediato_I + douta;
         
                     
-                end    
-            
-            fim:
+                end
+
+            jal:
                 begin
                     $display("O valor em x4 eh %d", $signed(douta));
                     $display("O valor em x5 eh %d", $signed(doutb));
+                    $display("O valor em PC eh %d", $signed(doutPC));
+                    WeR = 0;
+                    escolhe_constantePC = 0;
+                    #1
+                    //x6 = PC, PC = PC + (-)
+                    Rw = 6;
+                    Ra = 6;
+                    dinR = doutPC;
+                    #2
+                    WeR = 1;
+                    escolhe_constantePC = 1;
+                    constantePC = imediato_J;
+
+                end
+            
+            fim:
+                begin
+                    $display("O valor em x6 eh %d", $signed(douta));
                     $display("O valor em PC eh %d", $signed(doutPC));
                      /* Resetando os habilitadores */
                     WeR = 0; //Desabilitando a escrita no registrador
@@ -152,9 +172,9 @@ module testbench;
 
     
 
-    MemoriaInstrucao instrM(.endr(doutPC[7:3]), .clk(clk), .dout(instr));
+    MemoriaInstrucao instrM(.endr(doutPC[7:3]), .dout(instrTemp));
 
-    //RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
+    RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
 
     ImediatoI conv1(.instr(instr), .saida(imediato_I));
 

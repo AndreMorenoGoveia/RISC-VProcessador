@@ -5,6 +5,9 @@ module RegistradorInstrucao(entrada, saida, clk);
     output reg [31:0] saida;
 
     always @ (posedge clk)
-        saida <= entrada;
+    begin
+        #1
+        saida <= entrada; 
+    end
 
 endmodule

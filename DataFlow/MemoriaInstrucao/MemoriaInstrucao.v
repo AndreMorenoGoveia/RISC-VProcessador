@@ -1,5 +1,5 @@
-module MemoriaInstrucao #(parameter BITS = 32, parameter DEPTH = 32) 
-(endr, clk, dout);
+module MemoriaInstrucao #(parameter BITS = 32, parameter DEPTH = 2000) 
+(endr, dout);
 
 
 input [4:0] endr;
@@ -17,7 +17,8 @@ initial
 begin
 
     memoria[0] = 32'b00000000000000000001001000010111; // auipc #1 = 4096
-    memoria[1] = 32'b00000100000001100000001001100111; // jalr 
+    memoria[1] = 32'b00000100000001100000001001100111; // jalr
+    memoria[9] = 32'b01111111011111011110001001101111;// jal
     
 end
 
