@@ -65,93 +65,64 @@ module testbench;
     sub1 = 200,
     subi1 = 250,
     addi1 = 300,
-    jal = 350,
-    jalr = 400,
-    auipc = 450,
+    jal1 = 350,
+    jalr1 = 400,
+    auipc1 = 450,
     fim = 500;
 
-    /* Maquina de estados */
+    /* Upcodes */
+    parameter lw = 7'b0000011,
+              sw = 7'b0100011,
+              add_sub = 7'b0110011,
+              branch = 7'b1100011,
+              jal = 7'b1101111,
+              jalr = 7'b1100111,
+              auipc = 7'b0010111;
+
+    /* funct7 */
+    parameter add = 7'b0000000,
+              sub = 7'b0100000;
+
+    /* funct3 */
+
+
+
     always @ (posedge clk)
-        begin
-            case (estado)
-                inicio:
-                    estado <= auipc;
-                auipc:
-                    estado <= jalr;
-                jalr:
-                    estado <= jal;
-                jal:
-                    estado <= fim;
-
-
-            endcase
-        end
-
-    always @ (estado)
     begin
-        case(estado)
-            inicio:
+        case(instr[6:0])
+            lw: /* rw = mem[imm + ra(x0)] */
                 begin
-                    
-                end
-
-            auipc:
-                begin
-                    // x4 = PC + 4196
-                    $display("PC eh igual a %d", doutPC);
-                    Rw = 4;
-                    Ra = 4;
-                    #2
-                    dinR = doutPC + imediato_U;
-                    WeR = 1;
-                    
-
-                end
-
-            jalr:
-                begin
+                    /* Desabilitando escritas */
                     WeR = 0;
+                    WeM = 0;
+                    #3
+                    Rw = instr[11:7];
+                    Ra = instr[19:15];
+                    soma_ou_subtrai = 1;
+                    subtraindo = 0;
+                    imediato = 1;
+                    constanteULA = imediato_I;
                     #1
-                    // x5 = PC, PC = PC + x4 + 64
-                    Rw = 5;
-                    Rb = 5;
-                    dinR = doutPC;
-                    #2
+                    dinR = doutM;
                     WeR = 1;
-                    escolhe_constantePC = 1;
-                    constantePC = imediato_I + douta;
-        
-                    
                 end
 
-            jal:
+            add_sub:
                 begin
-                    $display("O valor em x4 eh %d", $signed(douta));
-                    $display("O valor em x5 eh %d", $signed(doutb));
-                    $display("O valor em PC eh %d", $signed(doutPC));
-                    WeR = 0;
-                    escolhe_constantePC = 0;
-                    #1
-                    //x6 = PC, PC = PC + (-)
-                    Rw = 6;
-                    Ra = 6;
-                    dinR = doutPC;
-                    #2
-                    WeR = 1;
-                    escolhe_constantePC = 1;
-                    constantePC = imediato_J;
+                    case (instr[31:25])
+                        add:
+                            begin
+                                
+                            end
+                        sub:
+                            begin
+                                
+                            end
+                    endcase
+
 
                 end
-            
-            fim:
-                begin
-                    $display("O valor em x6 eh %d", $signed(douta));
-                    $display("O valor em PC eh %d", $signed(doutPC));
-                     /* Resetando os habilitadores */
-                    WeR = 0; //Desabilitando a escrita no registrador
-                    WeM = 0; //Desabilitando a escrita na memória
-                    escolhe_constantePC = 0;
-                end
+
 
         endcase
 

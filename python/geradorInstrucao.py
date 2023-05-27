@@ -289,10 +289,9 @@ class jal:
 
 
     def faz_instrucao():
-        imm = decimal_binario_21bits(jal.const)
-        instrucao = "32'b" + imm[0] + imm[1:11] + imm[11] + imm[12:20] + bin(jal.rd)[2:].zfill(5) + jal.upcode
+        imm = decimal_binario_21bits(jal.const)[::-1]
+        instrucao = "32'b" + imm[20] + imm[1:11][::-1] + imm[11] + imm[12:20][::-1] + bin(jal.rd)[2:].zfill(5) + jal.upcode
         print(instrucao)
-
 
 class jalr:
     # rd = PC + 4
@@ -317,5 +316,5 @@ class jalr:
 
 
 
-jal.faz_instrucao()
+loadword.faz_instrucao()
 

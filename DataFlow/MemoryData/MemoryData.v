@@ -18,7 +18,9 @@ assign dout = memoria[endr];
 initial
 begin
 
-
+    memoria[0] = 51;
+    memoria[2] = 94;
+    memoria[5] = 18;
 
 end
 

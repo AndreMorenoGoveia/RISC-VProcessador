@@ -12,7 +12,7 @@ reg [BITS-1:0] data;
 always @(posedge clk)
 begin
   if (load)
-    data = in;
+    data <= in;
 end
 
 assign out = data;
