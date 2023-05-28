@@ -204,7 +204,16 @@ module testbench;
                             end
                         blt:
                             begin
-                                
+                                /* Saidas */
+                                Ra = instr[19:15];
+                                Rb = instr[24:20];
+
+                                #1
+                                if(flag_menor)
+                                    begin
+                                        escolhe_constantePC = 1;
+                                        constantePC = imediato_B;
+                                    end  
                             end
                         bltu:
                             begin

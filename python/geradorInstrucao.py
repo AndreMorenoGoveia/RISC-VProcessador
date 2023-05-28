@@ -158,7 +158,7 @@ class bne:
 
     rs1 = 4
     rs2 = 2
-    const = 64
+    const = 12
 
 
 
@@ -179,7 +179,7 @@ class blt:
 
     rs1 = 4
     rs2 = 2
-    const = 64
+    const = 16
 
 
 
@@ -315,5 +315,5 @@ class jalr:
 
 
 
-bne.faz_instrucao()
+blt.faz_instrucao()
 
