@@ -37,6 +37,7 @@ module testbench;
     wire [63:0] imediato_J;
     wire [63:0] imediato_U;
     wire [63:0] imediato_B;
+    wire [63:0] imediato_S;
 
 
     /* clock */
@@ -106,7 +107,8 @@ module testbench;
                     imediato = 1;
                     constanteULA = imediato_I;
                     #1
-                    dinR = doutM;
+                    dinR = 171;
+                    //dinR = doutM;
                     WeR = 1;
                 end
 
@@ -117,14 +119,15 @@ module testbench;
                     WeM = 0;
 
                     #2
-                    Ra = 0;
-                    Rb = 2;
+                    Ra = instr[24:20];
+                    Rb = instr[19:15];
                     soma_ou_subtrai = 1;
                     subtraindo = 0;
                     imediato = 1;
-                    constanteULA = imediato_I;
+                    constanteULA = imediato_S;
                     #2
                     dinM = doutb;
+                    WeM = 1;
                     
                 end
 
@@ -175,6 +178,8 @@ module testbench;
     ImediatoU convU(.instr(instr), .saida(imediato_U));
 
     ImediatoB convB(.instr(instr), .saida(imediato_B));
+
+    ImediatoS convS(.instr(instr), .saida(imediato_S));
 
     ULAPC ulapc(.din(doutPC), .constante(constantePC), .escolhe_constante(escolhe_constantePC), .dout(doutULAPC));
 

@@ -63,8 +63,8 @@ class storeword:
 
 
     def faz_instrucao():
-        imm = decimal_binario_12bits(storeword.const)
-        instrucao = "32'b" + imm[5:12] + bin(storeword.rs2)[2:].zfill(5) + bin(storeword.rs1)[2:].zfill(5) + storeword.funct3 + imm[0:5] + storeword.upcode
+        imm = decimal_binario_12bits(storeword.const)[::-1]
+        instrucao = "32'b" + imm[5:12][::-1] + bin(storeword.rs2)[2:].zfill(5) + bin(storeword.rs1)[2:].zfill(5) + storeword.funct3 + imm[0:5][::-1] + storeword.upcode
         print(instrucao)
 
 

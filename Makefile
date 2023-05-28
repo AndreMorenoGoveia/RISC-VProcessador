@@ -22,7 +22,8 @@ I = DataFlow/MemoriaInstrucao/Conversores/ImediatoI.v
 J = DataFlow/MemoriaInstrucao/Conversores/ImediatoJ.v
 U = DataFlow/MemoriaInstrucao/Conversores/ImediatoU.v
 B = DataFlow/MemoriaInstrucao/Conversores/ImediatoB.v
-CONV = $(I) $(J) $(U) $(B)
+S = DataFlow/MemoriaInstrucao/Conversores/ImediatoS.v
+CONV = $(I) $(J) $(U) $(B) $(S)
 IM = $(CONV) $(IR) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
 #PC
