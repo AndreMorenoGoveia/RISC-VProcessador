@@ -35,7 +35,7 @@ class loadword:
 
     rd = 2
     rs1 = 0
-    const = 2
+    const = 16
 
 
 
@@ -54,7 +54,7 @@ class storeword:
 
     rs1 = 2
     rs2 = 0
-    const = 1
+    const = 8
 
 
 
@@ -74,10 +74,9 @@ class add:
     # add rd, rs1, rs2
     # add x4, x2, x0
 
-    rd = 4
+    rd = 1
     rs1 = 2
     rs2 = 0
-    const = 67
 
 
 
@@ -96,9 +95,9 @@ class sub:
     # sub rd, rs1, rs2
     # sub x4, x2, x0
 
-    rd = 4
-    rs1 = 2
-    rs2 = 0
+    rd = 3
+    rs1 = 0
+    rs2 = 2
     const = 67
 
 
@@ -116,11 +115,11 @@ class sub:
 class addi:
     # rd = rs1 + const
     # addi rd, rs1, #const
-    # addi x4, x2, #67
+    # addi x4, x3, #-22
 
     rd = 4
-    rs1 = 2
-    const = 67
+    rs1 = 3
+    const = -22
 
 
 
@@ -316,5 +315,5 @@ class jalr:
 
 
 
-storeword.faz_instrucao()
+addi.faz_instrucao()
 

@@ -75,6 +75,7 @@ module testbench;
     parameter lw = 7'b0000011,
               sw = 7'b0100011,
               add_sub = 7'b0110011,
+              addi = 7'b0010011,
               branch = 7'b1100011,
               jal = 7'b1101111,
               jalr = 7'b1100111,
@@ -98,8 +99,8 @@ module testbench;
                     WeR = 0;
                     WeM = 0;
 
-
                     #1
+
                     Rw = instr[11:7];
                     Ra = instr[19:15];
                     soma_ou_subtrai = 1;
@@ -107,8 +108,7 @@ module testbench;
                     imediato = 1;
                     constanteULA = imediato_I;
                     #1
-                    dinR = 171;
-                    //dinR = doutM;
+                    dinR = doutM;
                     WeR = 1;
                 end
 
@@ -119,6 +119,7 @@ module testbench;
                     WeM = 0;
 
                     #1
+
                     Ra = instr[24:20];
                     Rb = instr[19:15];
                     soma_ou_subtrai = 1;
@@ -131,20 +132,50 @@ module testbench;
                     
                 end
 
-            add_sub:
+            add_sub: /* Rw = Ra +- Rb */
                 begin
-                    case (instr[31:25])
-                        add:
-                            begin
-                                
-                            end
-                        sub:
-                            begin
-                                
-                            end
-                    endcase
+                    /* Desabilitando escritas */
+                    WeR = 0;
+                    WeM = 0;
+
+                    #1
+
+                    soma_ou_subtrai = 1;
+                    subtraindo = instr[30]; //Pega a funct7 para decidir se adiciona ou subtrai
+                    Rw = instr[11:7];
+                    Ra = instr[19:15];
+                    Rb = instr[24:20];
+                    imediato = 0;
+
+                    #1
+
+                    dinR = doutULA;
+                    WeR = 1;
 
 
+
+                end
+
+            addi:
+                begin
+                    /* Desabilitando escritas */
+                    WeR = 0;
+                    WeM = 0;
+
+                    #1
+
+                    soma_ou_subtrai = 1;
+                    subtraindo = 0;
+                    Rw = instr[11:7];
+                    Ra = instr[19:15];
+                    constanteULA = imediato_I;
+                    imediato = 1;
+
+                    #1
+
+                    dinR = doutULA;
+                    WeR = 1;
+                    
                 end
 
 
@@ -167,7 +198,7 @@ module testbench;
 
     
 
-    MemoriaInstrucao instrM(.endr(doutPC[7:3]), .dout(instrTemp));
+    MemoriaInstrucao instrM(.endr(doutPC[6:2]), .dout(instrTemp));
 
     RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
 
