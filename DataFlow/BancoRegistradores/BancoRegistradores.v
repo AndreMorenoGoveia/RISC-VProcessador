@@ -18,7 +18,7 @@ module BancoRegistradores #(parameter BITS = 64) (
     Codificador Encoder(.Rw(Rw), .We(We), .load(load));
 
     /* 32 Registradores */
-    assign dout[0] = 1'b0; //Registrador padrão em zero;
+    RegistradorZero x0(.out(dout[0])); //Registrador padrão em zero;
     Registrador x1(.clk(clk), .load(load[1]), .in(din), .out(dout[1]));
     Registrador x2(.clk(clk), .load(load[2]), .in(din), .out(dout[2]));
     Registrador x3(.clk(clk), .load(load[3]), .in(din), .out(dout[3]));

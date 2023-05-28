@@ -89,12 +89,15 @@ module testbench;
 
     always @ (posedge clk)
     begin
+        #3
         case(instr[6:0])
             lw: /* rw = mem[imm + ra(x0)] */
                 begin
                     /* Desabilitando escritas */
                     WeR = 0;
                     WeM = 0;
+
+
                     #3
                     Rw = instr[11:7];
                     Ra = instr[19:15];
@@ -105,6 +108,24 @@ module testbench;
                     #1
                     dinR = doutM;
                     WeR = 1;
+                end
+
+            sw:
+                begin
+                    /* Desabilitando escritas */
+                    WeR = 0;
+                    WeM = 0;
+
+                    #2
+                    Ra = 0;
+                    Rb = 2;
+                    soma_ou_subtrai = 1;
+                    subtraindo = 0;
+                    imediato = 1;
+                    constanteULA = imediato_I;
+                    #2
+                    dinM = doutb;
+                    
                 end
 
             add_sub:
@@ -147,13 +168,13 @@ module testbench;
 
     RegistradorInstrucao instrR(.entrada(instrTemp), .saida(instr), .clk(clk));
 
-    ImediatoI conv1(.instr(instr), .saida(imediato_I));
+    ImediatoI convI(.instr(instr), .saida(imediato_I));
 
-    ImediatoJ conv2(.instr(instr), .saida(imediato_J));
+    ImediatoJ convJ(.instr(instr), .saida(imediato_J));
 
-    ImediatoU conv3(.instr(instr), .saida(imediato_U));
+    ImediatoU convU(.instr(instr), .saida(imediato_U));
 
-    ImediatoB conv4(.instr(instr), .saida(imediato_B));
+    ImediatoB convB(.instr(instr), .saida(imediato_B));
 
     ULAPC ulapc(.din(doutPC), .constante(constantePC), .escolhe_constante(escolhe_constantePC), .dout(doutULAPC));
 

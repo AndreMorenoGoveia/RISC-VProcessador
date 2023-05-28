@@ -3,7 +3,7 @@ all: riscv exec
 # Banco Registradores
 Codificador = DataFlow/BancoRegistradores/Codificador.v
 MUX32 = DataFlow/BancoRegistradores/Mux32x64bits.v
-REG = DataFlow/BancoRegistradores/Registrador.v
+REG = DataFlow/BancoRegistradores/Registrador.v DataFlow/BancoRegistradores/RegistradorZero.v
 BRpartes = $(Codificador) $(MUX32) $(REG)
 BR = DataFlow/BancoRegistradores/BancoRegistradores.v $(BRpartes)
 

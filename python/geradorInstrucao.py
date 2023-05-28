@@ -31,11 +31,11 @@ def decimal_binario_21bits(decimal):
 class loadword:
 
     # lw rd, #const(rs1)
-    # lw x2, #67(x0)
+    # lw x2, #2(x0)
 
     rd = 2
     rs1 = 0
-    const = -67
+    const = 2
 
 
 
@@ -50,11 +50,11 @@ class loadword:
 class storeword:
 
     # sw rs1, #const(rs2)
-    # sw x2, #67(x0)
+    # sw x2, #1(x0)
 
     rs1 = 2
     rs2 = 0
-    const = 67
+    const = 1
 
 
 
@@ -316,5 +316,5 @@ class jalr:
 
 
 
-loadword.faz_instrucao()
+storeword.faz_instrucao()
 
