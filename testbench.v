@@ -22,6 +22,7 @@ module testbench;
     reg imediato;
     reg [63:0] constanteULA;
     wire [63:0] doutULA;
+    wire flag_maior_u, flag_igual, flag_menor;
 
     /* Program counter */
     reg [63:0] constantePC;
@@ -86,20 +87,26 @@ module testbench;
               sub = 7'b0100000;
 
     /* funct3 */
+    parameter beq = 3'b000,
+              bne = 3'b001,
+              blt = 3'b100,
+              bge = 3'b101,
+              bltu = 3'b110,
+              bgeu = 3'b111;
 
 
 
     always @ (posedge clk)
     begin
-        #2
+        #3
+        /* Desabilitando escritas */
+        WeR = 0;
+        WeM = 0;
+        escolhe_constantePC = 0;
+
         case(instr[6:0])
             lw: /* rw = mem[imm + ra(x0)] */
                 begin
-                    /* Desabilitando escritas */
-                    WeR = 0;
-                    WeM = 0;
-
-                    #1
 
                     Rw = instr[11:7];
                     Ra = instr[19:15];
@@ -114,11 +121,6 @@ module testbench;
 
             sw: /* mem[Ra + imm] = Rb */
                 begin
-                    /* Desabilitando escritas */
-                    WeR = 0;
-                    WeM = 0;
-
-                    #1
 
                     Ra = instr[24:20];
                     Rb = instr[19:15];
@@ -134,11 +136,6 @@ module testbench;
 
             add_sub: /* Rw = Ra +- Rb */
                 begin
-                    /* Desabilitando escritas */
-                    WeR = 0;
-                    WeM = 0;
-
-                    #1
 
                     soma_ou_subtrai = 1;
                     subtraindo = instr[30]; //Pega a funct7 para decidir se adiciona ou subtrai
@@ -158,11 +155,6 @@ module testbench;
 
             addi:
                 begin
-                    /* Desabilitando escritas */
-                    WeR = 0;
-                    WeM = 0;
-
-                    #1
 
                     soma_ou_subtrai = 1;
                     subtraindo = 0;
@@ -176,6 +168,55 @@ module testbench;
                     dinR = doutULA;
                     WeR = 1;
                     
+                end
+
+            branch:
+                begin
+                    case(instr[14:12])
+                        beq:/* if(Ra == Rb) PC = PC + imm */
+                            begin
+
+                                /* Saidas */
+                                Ra = instr[19:15];
+                                Rb = instr[24:20];
+
+                                #1
+                                if(flag_igual)
+                                    begin
+                                        escolhe_constantePC = 1;
+                                        constantePC = imediato_B;
+                                    end                                
+
+
+                            end
+                        bne:
+                            begin
+                                /* Saidas */
+                                Ra = instr[19:15];
+                                Rb = instr[24:20];
+
+                                #1
+                                if(!flag_igual)
+                                    begin
+                                        escolhe_constantePC = 1;
+                                        constantePC = imediato_B;
+                                    end    
+                            end
+                        blt:
+                            begin
+                                
+                            end
+                        bltu:
+                            begin
+                                
+                            end
+                        bgeu:
+                            begin
+                                
+                            end
+
+                    endcase
+
                 end
 
 
@@ -194,7 +235,8 @@ module testbench;
     MemoryData memoria(.endr(doutULA[7:3]), .We(WeM), .din(dinM), .clk(clk), .dout(doutM));
 
     ULA ula(.dina(douta), .dinb(doutb), .constante(constanteULA), .soma_ou_subtrai(soma_ou_subtrai),
-            .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA));
+            .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA), .flag_maior_u(flag_maior_u),
+            .flag_igual(flag_igual), .flag_menor(flag_menor));
 
     
 

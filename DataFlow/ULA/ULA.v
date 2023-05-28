@@ -1,9 +1,11 @@
 module ULA  #(parameter BITS = 64)
-            (dina, dinb, constante, soma_ou_subtrai, subtraindo, imediato, dout);
+            (dina, dinb, constante, soma_ou_subtrai, subtraindo, imediato,
+             dout, flag_maior_u, flag_igual, flag_menor);
 
     input [BITS-1:0] dina, dinb, constante;
     input soma_ou_subtrai, subtraindo, imediato;
-    input [1:0] escolhe_entrada1, escolhe_entrada2;
+
+    output flag_maior_u, flag_igual, flag_menor;
     output [BITS-1:0] dout;
 
     wire [BITS-1:0] fator1, fator2;
@@ -14,7 +16,10 @@ module ULA  #(parameter BITS = 64)
 
     MuxBC mux1(.B(dinb), .C(constante), .imediato(imediato), .S(fator2));
 
-    SomadorSubtrator S(.subtraindo(subtraindo), .A(fator1), .B(fator2), .S(outs));
+    SomadorSubtrator soma_sub(.subtraindo(subtraindo), .A(fator1), .B(fator2), .S(outs));
+
+    Flags flags(.dinA(dina), .dinB(dinb), .flag_maior_u(flag_maior_u),
+          .flag_igual(flag_igual), .flag_menor(flag_menor));
 
     assign dout = soma_ou_subtrai ? outs : 0;
 

@@ -6,6 +6,7 @@ module RegistradorInstrucao(entrada, saida, clk);
 
     always @ (posedge clk)
     begin
+        #1
         saida <= entrada; 
     end
 

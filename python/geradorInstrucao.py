@@ -134,11 +134,11 @@ class addi:
 class beq:
     # if(rs1 == rs2) vai para PC+64
     # beq rs1, rs2, #const
-    # beq x4, x2, #64
+    # beq x2, x1, #8
 
-    rs1 = 4
-    rs2 = 2
-    const = 64
+    rs1 = 2
+    rs2 = 1
+    const = 8
 
 
 
@@ -147,14 +147,14 @@ class beq:
 
 
     def faz_instrucao():
-        imm = decimal_binario_13bits(beq.const)
-        instrucao = "32'b" + imm[12] + imm[5:11] + bin(beq.rs2)[2:].zfill(5) + bin(beq.rs1)[2:].zfill(5) + beq.funct3 + imm[1:5] + imm[11] + beq.upcode
+        imm = decimal_binario_13bits(beq.const)[::-1]
+        instrucao = "32'b" + imm[12] + imm[5:11][::-1] + bin(beq.rs2)[2:].zfill(5) + bin(beq.rs1)[2:].zfill(5) + beq.funct3 + imm[1:5][::-1] + imm[11] + beq.upcode
         print(instrucao)
 
 class bne:
     # if(rs1 != rs2) vai para PC+64
     # bne rs1, rs2, #const
-    # bne x4, x2, #64
+    # bne x4, x2, #8
 
     rs1 = 4
     rs2 = 2
@@ -167,8 +167,8 @@ class bne:
 
 
     def faz_instrucao():
-        imm = decimal_binario_13bits(bne.const)
-        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bne.rs2)[2:].zfill(5) + bin(bne.rs1)[2:].zfill(5) + bne.funct3 + imm[1:5] + imm[11] + bne.upcode
+        imm = decimal_binario_13bits(bne.const)[::-1]
+        instrucao = "32'b" + imm[12] + imm[5:11][::-1] + bin(bne.rs2)[2:].zfill(5) + bin(bne.rs1)[2:].zfill(5) + bne.funct3 + imm[1:5][::-1] + imm[11] + bne.upcode
         print(instrucao)
 
 
@@ -188,8 +188,8 @@ class blt:
 
 
     def faz_instrucao():
-        imm = decimal_binario_13bits(blt.const)
-        instrucao = "32'b" + imm[12] + imm[5:11] + bin(blt.rs2)[2:].zfill(5) + bin(blt.rs1)[2:].zfill(5) + blt.funct3 + imm[1:5] + imm[11] + blt.upcode
+        imm = decimal_binario_13bits(blt.const)[::-1]
+        instrucao = "32'b" + imm[12] + imm[5:11][::-1] + bin(blt.rs2)[2:].zfill(5) + bin(blt.rs1)[2:].zfill(5) + blt.funct3 + imm[1:5][::-1] + imm[11] + blt.upcode
         print(instrucao)
 
 
@@ -209,8 +209,8 @@ class bge:
 
 
     def faz_instrucao():
-        imm = decimal_binario_13bits(bge.const)
-        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bge.rs2)[2:].zfill(5) + bin(bge.rs1)[2:].zfill(5) + bge.funct3 + imm[1:5] + imm[11] + bge.upcode
+        imm = decimal_binario_13bits(bge.const)[::-1]
+        instrucao = "32'b" + imm[12] + imm[5:11][::-1] + bin(bge.rs2)[2:].zfill(5) + bin(bge.rs1)[2:].zfill(5) + bge.funct3 + imm[1:5][::-1] + imm[11] + bge.upcode
         print(instrucao)
 
 
@@ -230,8 +230,8 @@ class bltu:
 
 
     def faz_instrucao():
-        imm = bin(bltu.const)[2:].zfill(13)
-        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bltu.rs2)[2:].zfill(5) + bin(bltu.rs1)[2:].zfill(5) + bltu.funct3 + imm[1:5] + imm[11] + bltu.upcode
+        imm = bin(bltu.const)[2:].zfill(13)[::-1]
+        instrucao = "32'b" + imm[12] + imm[5:11][::-1] + bin(bltu.rs2)[2:].zfill(5) + bin(bltu.rs1)[2:].zfill(5) + bltu.funct3 + imm[1:5][::-1] + imm[11] + bltu.upcode
         print(instrucao)
 
 class bgeu:
@@ -250,8 +250,8 @@ class bgeu:
 
 
     def faz_instrucao():
-        imm = bin(bgeu.const)[2:].zfill(13)
-        instrucao = "32'b" + imm[12] + imm[5:11] + bin(bgeu.rs2)[2:].zfill(5) + bin(bgeu.rs1)[2:].zfill(5) + bgeu.funct3 + imm[1:5] + imm[11] + bgeu.upcode
+        imm = bin(bgeu.const)[2:].zfill(13)[::-1]
+        instrucao = "32'b" + imm[12] + imm[5:11][::-1] + bin(bgeu.rs2)[2:].zfill(5) + bin(bgeu.rs1)[2:].zfill(5) + bgeu.funct3 + imm[1:5][::-1] + imm[11] + bgeu.upcode
         print(instrucao)
 
 
@@ -315,5 +315,5 @@ class jalr:
 
 
 
-addi.faz_instrucao()
+bne.faz_instrucao()
 
