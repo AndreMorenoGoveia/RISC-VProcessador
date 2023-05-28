@@ -11,8 +11,9 @@ reg [BITS-1:0] data;
 
 always @(posedge clk)
 begin
+  #5
   if (load)
-    data <= in;
+    data = in;
 end
 
 assign out = data;

@@ -90,7 +90,7 @@ module testbench;
 
     always @ (posedge clk)
     begin
-        #3
+        #2
         case(instr[6:0])
             lw: /* rw = mem[imm + ra(x0)] */
                 begin
@@ -99,7 +99,7 @@ module testbench;
                     WeM = 0;
 
 
-                    #3
+                    #1
                     Rw = instr[11:7];
                     Ra = instr[19:15];
                     soma_ou_subtrai = 1;
@@ -112,20 +112,20 @@ module testbench;
                     WeR = 1;
                 end
 
-            sw:
+            sw: /* mem[Ra + imm] = Rb */
                 begin
                     /* Desabilitando escritas */
                     WeR = 0;
                     WeM = 0;
 
-                    #2
+                    #1
                     Ra = instr[24:20];
                     Rb = instr[19:15];
                     soma_ou_subtrai = 1;
                     subtraindo = 0;
                     imediato = 1;
                     constanteULA = imediato_S;
-                    #2
+                    #1
                     dinM = doutb;
                     WeM = 1;
                     

@@ -27,7 +27,7 @@ end
 
 always @(posedge clk)
     begin
-        
+        #5
         if(We)
             begin
                 memoria[endr] = din;
