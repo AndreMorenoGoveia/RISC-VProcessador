@@ -22,7 +22,7 @@ module testbench;
     reg imediato;
     reg [63:0] constanteULA;
     wire [63:0] doutULA;
-    wire flag_maior_u, flag_igual, flag_menor;
+    wire flag_maior_igual_u, flag_igual, flag_menor;
 
     /* Program counter */
     reg [63:0] constantePC;
@@ -196,7 +196,7 @@ module testbench;
                                 Rb = instr[24:20];
 
                                 #1
-                                if(!flag_igual)
+                                if(~flag_igual)
                                     begin
                                         escolhe_constantePC = 1;
                                         constantePC = imediato_B;
@@ -215,13 +215,46 @@ module testbench;
                                         constantePC = imediato_B;
                                     end  
                             end
+                        
+                        bge:
+                            begin
+                                /* Saidas */
+                                Ra = instr[19:15];
+                                Rb = instr[24:20];
+
+                                #1
+                                if((~flag_menor))
+                                    begin
+                                        escolhe_constantePC = 1;
+                                        constantePC = imediato_B;
+                                    end
+                            end
+                        
                         bltu:
                             begin
-                                
+                                 /* Saidas */
+                                Ra = instr[19:15];
+                                Rb = instr[24:20];
+
+                                #1
+                                if((~flag_maior_igual_u))
+                                    begin
+                                        escolhe_constantePC = 1;
+                                        constantePC = imediato_B;
+                                    end 
                             end
                         bgeu:
                             begin
-                                
+                                 /* Saidas */
+                                Ra = instr[19:15];
+                                Rb = instr[24:20];
+
+                                #1
+                                if((flag_maior_igual_u))
+                                    begin
+                                        escolhe_constantePC = 1;
+                                        constantePC = imediato_B;
+                                    end 
                             end
 
                     endcase
@@ -244,7 +277,7 @@ module testbench;
     MemoryData memoria(.endr(doutULA[7:3]), .We(WeM), .din(dinM), .clk(clk), .dout(doutM));
 
     ULA ula(.dina(douta), .dinb(doutb), .constante(constanteULA), .soma_ou_subtrai(soma_ou_subtrai),
-            .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA), .flag_maior_u(flag_maior_u),
+            .subtraindo(subtraindo), .imediato(imediato), .dout(doutULA), .flag_maior_igual_u(flag_maior_igual_u),
             .flag_igual(flag_igual), .flag_menor(flag_menor));
 
     

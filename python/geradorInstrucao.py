@@ -196,11 +196,11 @@ class blt:
 class bge:
     # if(rs1 >= rs2) vai para PC+64
     # bge rs1, rs2, #const
-    # bge x4, x2, #64
+    # bge x2, x4, #20
 
-    rs1 = 4
-    rs2 = 2
-    const = 64
+    rs1 = 2
+    rs2 = 4
+    const = 20
 
 
 
@@ -237,11 +237,11 @@ class bltu:
 class bgeu:
     # if(rs1 >= rs2) vai para PC+64
     # bgeu rs1, rs2, #const
-    # bgeu x4, x2, #64
+    # bgeu x2, x1, #64
 
-    rs1 = 4
-    rs2 = 2
-    const = 64
+    rs1 = 2
+    rs2 = 1
+    const = 8
 
 
 
@@ -315,5 +315,5 @@ class jalr:
 
 
 
-blt.faz_instrucao()
+bgeu.faz_instrucao()
 
