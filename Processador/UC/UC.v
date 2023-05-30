@@ -1,4 +1,4 @@
-module UC(clk, reset, imm_PC)
+module UC(clk, reset, imm_PC);
 
 input clk, reset;
 reg[2:0] estado;
@@ -39,7 +39,7 @@ always @ (posedge clk)
                 end
             wb:
                 begin
-                    estado <= fetch
+                    estado <= fetch;
                 end
 
         endcase
@@ -53,7 +53,7 @@ always @ (posedge clk)
 
                 fetch:
                     begin
-                        atualiza_pc <= 1
+                        atualiza_pc <= 1;
                     end
                 decode:
                     begin

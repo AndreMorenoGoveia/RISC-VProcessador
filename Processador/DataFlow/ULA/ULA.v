@@ -20,7 +20,7 @@ module ULA  #(parameter BITS = 64)
     assign fator1 = dina;
 
 
-    MuxBC mux1(.B(dinb), .C(imm), .imediato(usa_imm), .S(fator2));
+    MuxBC mux1(.B(dinb), .C(imm), .usa_imm(usa_imm), .S(fator2));
 
     SomadorSubtrator soma_sub(.subtraindo(subtraindo), .A(fator1), .B(fator2), .S(outs));
 

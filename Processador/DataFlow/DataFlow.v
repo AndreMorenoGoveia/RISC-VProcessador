@@ -1,4 +1,4 @@
-module DataFlow(clk, instr, soma_ou_subtrai);
+module DataFlow(clk, instr, soma_ou_subtrai, upcode);
 
 parameter I = 0, J = 1, U = 2, B = 3, S = 4;
 parameter nao = 0, soma = 1, subrtrai = 2;
@@ -27,7 +27,7 @@ wire flag_maior_igual_u, flag_menor, flag_igual;
 input [31:0] instr;
 wire [2:0] funct3;
 wire [6:0] funct7;
-wire [6:0] upcode;
+output [6:0] upcode;
 assign upcode = instr[6:0];
 
 

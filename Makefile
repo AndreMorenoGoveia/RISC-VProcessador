@@ -1,42 +1,48 @@
 all: riscv exec
 
-# Banco Registradores
-Codificador = DataFlow/BancoRegistradores/Codificador.v
-MUX32 = DataFlow/BancoRegistradores/Mux32x64bits.v
-REG = DataFlow/BancoRegistradores/Registrador.v DataFlow/BancoRegistradores/RegistradorZero.v
-BRpartes = $(Codificador) $(MUX32) $(REG)
-BR = DataFlow/BancoRegistradores/BancoRegistradores.v $(BRpartes)
+#BANCOREGISTRADORES
+RF = $(REG) $(MUXCOD) Processador/DataFlow/BancoRegistradores/BancoRegistradores.v
+REG = Processador/DataFlow/BancoRegistradores/Registrador.v Processador/DataFlow/BancoRegistradores/RegistradorZero.v
+MUXCOD = Processador/DataFlow/BancoRegistradores/Codificador.v Processador/DataFlow/BancoRegistradores/Mux32x64bits.v
+
+#CONVERSORESIMEDIATO
+CONV = $(B) $(I) $(J) $(S) $(U) Processador/DataFlow/Conversores/Conversor.v
+B = Processador/DataFlow/Conversores/ImediatoB.v
+I = Processador/DataFlow/Conversores/ImediatoI.v
+J = Processador/DataFlow/Conversores/ImediatoJ.v
+S = Processador/DataFlow/Conversores/ImediatoS.v
+U = Processador/DataFlow/Conversores/ImediatoU.v
 
 #ULA
-SOMA = DataFlow/ULA/SomadorSubtrator.v
-MUXAB = DataFlow/ULA/MuxBC.v
-FLAGS = DataFlow/ULA/Flags.v
-ULA = $(SOMA) $(MUXAB) $(FLAGS) DataFlow/ULA/ULA.v
+ULA = $(FLAGS) $(SOMA) $(MUXULA) Processador/DataFlow/ULA/ULA.v
+FLAGS = Processador/DataFlow/ULA/Flags.v
+SOMA = Processador/DataFlow/ULA/SomadorSubtrator.v
+MUXULA = Processador/DataFlow/ULA/MuxBC.v
 
-#MemoryData
-MD = DataFlow/MemoryData/MemoryData.v
+#DATAFLOW
+DF = $(RF) $(CONV) $(ULA) Processador/DataFlow/DataFlow.v
 
-#InstructionMemory
-IR = DataFlow/MemoriaInstrucao/RegistradorInstrucao.v
-I = DataFlow/MemoriaInstrucao/Conversores/ImediatoI.v
-J = DataFlow/MemoriaInstrucao/Conversores/ImediatoJ.v
-U = DataFlow/MemoriaInstrucao/Conversores/ImediatoU.v
-B = DataFlow/MemoriaInstrucao/Conversores/ImediatoB.v
-S = DataFlow/MemoriaInstrucao/Conversores/ImediatoS.v
-CONV = $(I) $(J) $(U) $(B) $(S)
-IM = $(CONV) $(IR) DataFlow/MemoriaInstrucao/MemoriaInstrucao.v 
 
-#PC
-PC = DataFlow/ProgramCounter/ProgramCounter.v DataFlow/ProgramCounter/ULAPC.v
+#PROGRAM COUNTER
+PC = Processador/UC/ProgramCounter/ProgramCounter.v Processador/UC/ProgramCounter/ULAPC.v
 
-#UC
-UC = testbench.v $(IM) $(PC)
+#UNIDADECONTROLE
+UC = $(PC) Processador/UC/UC.v
 
-Processador = $(UC) $(BR) $(MD) $(ULA)
+#PROCESSADOR
+PRO = $(DF) $(UC) Processador/Processador.v
 
+
+#MEMORIA
+MEM = $(IM) $(DM) $(IR) Memoria/Memoria.v
+IM = Memoria/MemoriaInstrucao.v
+IR = Memoria/RegistradorInstrucao.v
+DM = Memoria/MemoryData.v
+
+AMBIENTE = testbench.v $(PRO) $(MEM)
 
 riscv:
-	iverilog -o riscv.out $(Processador)
+	iverilog -o riscv.out $(AMBIENTE)
 
 exec: riscv
 	vvp riscv.out
