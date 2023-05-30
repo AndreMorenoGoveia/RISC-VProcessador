@@ -261,6 +261,21 @@ module testbench;
 
                 end
 
+                auipc:
+                    begin
+                        
+                    end
+                
+                jal:
+                    begin
+                        
+                    end
+                
+                jalr:
+                    begin
+                        
+                    end
+
 
         endcase
 
