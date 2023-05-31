@@ -1,4 +1,4 @@
-module UC(clk, reset, imm_PC, upcode, funct7, soma_ou_subtrai);
+module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai, doutPC);
 
 input clk, reset;
 reg[3:0] estado;
@@ -6,13 +6,14 @@ reg[3:0] estado;
 /* ProgramCounter */
 reg atualiza_pc;
 wire escolhe_constante;
-wire [63:0] doutPC;
+output [63:0] doutPC;
 wire [63:0] doutULAPC;
-input [63:0] imm_PC;
+input [63:0] imm_pc;
 
 /* instrução */
-input [6:0] upcode;
+input [6:0] opcode;
 input [6:0] funct7;
+input [2:0] funct3;
 
 /* add/sub */
 output [1:0] soma_ou_subtrai;
@@ -86,10 +87,10 @@ always @ (posedge clk)
         end
 
         /* add / sub */
-        assign soma_ou_subtrai = upcode === 7'b0110011 ? funct7 === 7'b0000000 ? soma : subrtrai : nao;
+        assign soma_ou_subtrai = opcode === 7'b0110011 ? funct7 === 7'b0000000 ? soma : subrtrai : nao;
 
         ProgramCounter pc(.clk(atualiza_pc), .din(doutULAPC), .dout(doutPC));
-        ULAPC ulapc(.din(doutPC), .imm(imm_PC), .soma_imm(soma_imm_PC), .dout(doutULAPC));
+        ULAPC ulapc(.din(doutPC), .imm(imm_pc), .soma_imm(soma_imm_PC), .dout(doutULAPC));
 
 
 endmodule

@@ -37,7 +37,7 @@ PRO = $(DF) $(UC) Processador/Processador.v
 MEM = $(IM) $(DM) $(IR) Memoria/Memoria.v
 IM = Memoria/MemoriaInstrucao.v
 IR = Memoria/RegistradorInstrucao.v
-DM = Memoria/MemoryData.v
+DM = Memoria/MemoriaDados.v
 
 AMBIENTE = testbench.v $(PRO) $(MEM)
 

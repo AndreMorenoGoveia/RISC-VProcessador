@@ -1,12 +1,12 @@
-module RegistradorInstrucao(entrada, saida, clk);
+module RegistradorInstrucao(din, dout, clk);
 
     input clk;
-    input [31:0] entrada;
-    output reg [31:0] saida;
+    input [31:0] din;
+    output reg [31:0] dout;
 
     always @ (posedge clk)
     begin
-        saida <= entrada; 
+        dout <= din;
     end
 
 endmodule
