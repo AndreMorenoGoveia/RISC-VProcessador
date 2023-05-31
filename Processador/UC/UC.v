@@ -1,14 +1,15 @@
-module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai, doutPC);
+module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai, doutPC, atualiza_pc);
 
 input clk, reset;
 reg[3:0] estado;
 
 /* ProgramCounter */
-reg atualiza_pc;
+output reg atualiza_pc;
 wire escolhe_constante;
 output [63:0] doutPC;
 wire [63:0] doutULAPC;
 input [63:0] imm_pc;
+reg soma_imm_PC;
 
 /* instrução */
 input [6:0] opcode;
@@ -24,8 +25,9 @@ parameter init = 0, fetch = 1, decode = 2, ex = 3, wb = 4;
 
 initial
 begin
-    estado <= fetch;
+    estado <= init;
     atualiza_pc <= 0;
+    soma_imm_PC <= 0;
 end
 
 /* Mudança de estado */

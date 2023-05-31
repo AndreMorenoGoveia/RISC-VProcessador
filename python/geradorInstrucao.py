@@ -315,5 +315,6 @@ class jalr:
 
 
 
-bgeu.faz_instrucao()
+loadword.faz_instrucao()
+add.faz_instrucao()
 

@@ -16,7 +16,8 @@ assign dout = memoria[addr];
 initial
 begin
 
-
+    memoria[0] <= 32'b00000001000000000010000100000011;
+    memoria[1] <= 32'b10000000000000010000000010110011;
 
 end
 
