@@ -15,7 +15,7 @@ module ULA  #(parameter BITS = 64)
     wire [BITS-1:0] fator1, fator2;
     wire [BITS-1:0] outs;
 
-    assign subtraindo = soma_ou_subtrai == subrtrai ? 1 : 0;
+    assign subtraindo = soma_ou_subtrai === subrtrai ? 1 : 0;
 
     assign fator1 = dina;
 
@@ -27,6 +27,6 @@ module ULA  #(parameter BITS = 64)
     Flags flags(.dinA(dina), .dinB(dinb), .flag_maior_igual_u(flag_maior_igual_u),
                 .flag_igual(flag_igual), .flag_menor(flag_menor));
 
-    assign dout = soma_ou_subtrai != nao ? outs : 0;
+    assign dout = outs;
 
 endmodule

@@ -38,14 +38,18 @@
 ### ULAPC
     Define a quantidade de instruções a serem avançadas.
 
-## Testbench
-No testbench são testadas as operações de load e store assim como o funcionamento da alteração do
-conteúdo dos registradores e da memória para qualquer outro comando.
+## Simulação
+    Para simular o funcionamento do hardware é possível utilizar o comando make que gerará toda a saída
+    do testbench caso seu computador tenha o make instalado. Caso contrário utilize os seguintes comandos
+    nesta ordem:
+    1. iverilog -o riscv.out testbench.v Processador/DataFlow/BancoRegistradores/Registrador.v Processador/DataFlow/BancoRegistradores/RegistradorZero.v Processador/DataFlow/BancoRegistradores/Codificador.v Processador/DataFlow/BancoRegistradores/Mux32x64bits.v Processador/DataFlow/BancoRegistradores/BancoRegistradores.v Processador/DataFlow/Conversores/ImediatoB.v Processador/DataFlow/Conversores/ImediatoI.v Processador/DataFlow/Conversores/ImediatoJ.v Processador/DataFlow/Conversores/ImediatoS.v Processador/DataFlow/Conversores/ImediatoU.v Processador/DataFlow/Conversores/Conversor.v Processador/DataFlow/ULA/Flags.v Processador/DataFlow/ULA/SomadorSubtrator.v Processador/DataFlow/ULA/MuxBC.v Processador/DataFlow/ULA/ULA.v Processador/DataFlow/DataFlow.v Processador/UC/ProgramCounter/ProgramCounter.v Processador/UC/ProgramCounter/ULAPC.v Processador/UC/UC.v Processador/Processador.v Memoria/MemoriaInstrucao.v Memoria/MemoriaDados.v Memoria/RegistradorInstrucao.v Memoria/Memoria.v
+    2. vvp riscv.out
 
-Para testar o funcionamento do hardware pode-se utilizar o Icarus Verilog, digitando os seguintes comandos no terminal:
-1. iverilog -o reg Registrador.v MemoryData.v BancoRegistradores.v testbench.v
-2. vvp reg
+    Para analizar em formato de ondas o funcionamento, após dar make ou utilizar os comandos acima, digite no terminal:
+    * gtkwave riscv.vcd
 
-Para uma visão mais detalhada do funcionamento com a wave, após simular o hardware digite no terminal:
 
-3. gtkwave reg.vcd
+    Na simulação atual o que ocorreu foi um add e um sub, feitos com o registrador x0 de valor inicial 153 para
+    demonstrar o funcionamento da máquina de estados agora presente na UC. As operações ocorreram nessa ordem:
+    * x1 = x0 + x0;
+    * x2 = x0 - x1;

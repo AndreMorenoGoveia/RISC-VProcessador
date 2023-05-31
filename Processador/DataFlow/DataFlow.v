@@ -1,4 +1,4 @@
-module DataFlow(clk, instr, soma_ou_subtrai, imm, opcode, funct7, funct3);
+module DataFlow(clk, instr, soma_ou_subtrai, imm, opcode, funct7, funct3, WeR);
 
 parameter I = 0, J = 1, U = 2, B = 3, S = 4;
 parameter nao = 0, soma = 1, subrtrai = 2;
@@ -8,8 +8,9 @@ input clk;
 
 /* Banco Registradores */
 wire [4:0] Ra, Rb, Rw;
-wire WeR;
+input WeR;
 wire [63:0] dinR, douta, doutb;
+assign dinR = doutULA;
 
 /* Conversor */
 wire [2:0] select_imm_conv;
@@ -48,6 +49,7 @@ assign Ra = soma_ou_subtrai !== nao ? rs1 :
        0;
 assign Rb = soma_ou_subtrai !== nao ? rs2 :
        0;
+assign usa_imm_ula = soma_ou_subtrai === nao;
 
 
 

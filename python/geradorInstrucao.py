@@ -72,10 +72,10 @@ class add:
 
     # rd = rs1 + rs2
     # add rd, rs1, rs2
-    # add x4, x2, x0
+    # add x1, x0, x0
 
     rd = 1
-    rs1 = 2
+    rs1 = 0
     rs2 = 0
 
 
@@ -95,10 +95,9 @@ class sub:
     # sub rd, rs1, rs2
     # sub x4, x2, x0
 
-    rd = 3
+    rd = 2
     rs1 = 0
-    rs2 = 2
-    const = 67
+    rs2 = 1
 
 
 
@@ -315,6 +314,7 @@ class jalr:
 
 
 
-loadword.faz_instrucao()
+
 add.faz_instrucao()
+sub.faz_instrucao()
 

@@ -14,15 +14,17 @@ module Processador(clk, reset, instr, doutPC, WeDM, doutULA, dinDM, doutDM, atua
     wire [6:0] funct7;
     wire [2:0] funct3;
     wire [1:0] soma_ou_subtrai;
+    wire WeR;
 
 
 
     UC uc(.clk(clk), .reset(reset), .imm_pc(imm_pc), .opcode(opcode),
           .funct7(funct7), .funct3(funct3), .soma_ou_subtrai(soma_ou_subtrai),
-          .doutPC(doutPC), .atualiza_pc(atualiza_pc));
+          .doutPC(doutPC), .atualiza_pc(atualiza_pc), .WeR(WeR));
     
     DataFlow df(.clk(clk), .instr(instr), .soma_ou_subtrai(soma_ou_subtrai),
-                .imm(imm_pc), .opcode(opcode), .funct7(funct7), .funct3(funct3));
+                .imm(imm_pc), .opcode(opcode), .funct7(funct7), .funct3(funct3),
+                .WeR(WeR));
 
 
 endmodule
