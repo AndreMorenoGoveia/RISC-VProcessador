@@ -49,4 +49,4 @@ exec: riscv
 
 
 clean:
-	rm -f riscv riscv.vcd
+	rm -f riscv.out riscv.vcd

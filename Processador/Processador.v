@@ -24,7 +24,7 @@ module Processador(clk, reset, instr, doutPC, WeDM, doutULA, dinDM, doutDM, atua
     
     DataFlow df(.clk(clk), .instr(instr), .soma_ou_subtrai(soma_ou_subtrai),
                 .imm(imm_pc), .opcode(opcode), .funct7(funct7), .funct3(funct3),
-                .WeR(WeR));
+                .WeR(WeR), .doutULA(doutULA));
 
 
 endmodule

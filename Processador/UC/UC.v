@@ -1,7 +1,8 @@
-module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai, doutPC, atualiza_pc, WeR);
+module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai,
+          doutPC, atualiza_pc, WeR, load);
 
 input clk, reset;
-reg[3:0] estado;
+reg[1:0] estado;
 output reg WeR;
 
 /* ProgramCounter */
@@ -22,13 +23,13 @@ output [1:0] soma_ou_subtrai;
 parameter nao = 0, soma = 1, subrtrai = 2;
 
 /* load */
-wire load;
+output load;
 
-parameter init = 0, fetch = 1, decode = 2, ex = 3, wb = 4;
+parameter fetch = 0, decode = 1, ex = 2, wb = 3;
 
 initial
 begin
-    estado <= init;
+    estado <= fetch;
     atualiza_pc <= 0;
     soma_imm_PC <= 0;
 end
@@ -37,11 +38,6 @@ end
 always @ (posedge clk)
     begin
         case(estado)
-
-            init:
-                begin
-                    estado <= fetch;
-                end
 
             fetch:
                 begin

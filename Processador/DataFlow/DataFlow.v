@@ -1,4 +1,4 @@
-module DataFlow(clk, instr, soma_ou_subtrai, imm, opcode, funct7, funct3, WeR);
+module DataFlow(clk, instr, soma_ou_subtrai, imm, opcode, funct7, funct3, WeR, doutULA);
 
 parameter I = 0, J = 1, U = 2, B = 3, S = 4;
 parameter nao = 0, soma = 1, subrtrai = 2;
@@ -20,7 +20,7 @@ wire [63:0] imm_conv;
 /* ULA */
 wire [63:0] imm_ula;
 input [1:0] soma_ou_subtrai;
-wire [63:0] doutULA;
+output [63:0] doutULA;
 wire usa_imm_ula;
 wire flag_maior_igual_u, flag_menor, flag_igual;
 
