@@ -3,6 +3,7 @@ module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai,
 
 input clk, reset;
 reg[1:0] estado;
+reg[1:0] prox_extado;
 output reg WeR;
 
 /* ProgramCounter */
@@ -29,7 +30,7 @@ parameter fetch = 0, decode = 1, ex = 2, wb = 3;
 
 initial
 begin
-    estado <= fetch;
+    prox_extado <= fetch;
     atualiza_pc <= 0;
     soma_imm_PC <= 0;
 end
@@ -37,27 +38,14 @@ end
 /* Mudança de estado */
 always @ (posedge clk)
     begin
-        case(estado)
-
-            fetch:
-                begin
-                    estado <= decode;
-                end
-
-            decode:
-                begin
-                    estado <= ex;
-                end
-            ex:
-                begin
-                    estado <= wb;
-                end
-            wb:
-                begin
-                    estado <= fetch;
-                end
-
-        endcase
+        if(reset)
+            begin
+                estado <= fetch;
+            end
+        else
+            begin
+                estado <= prox_extado;
+            end
 
     end
 
@@ -70,19 +58,27 @@ always @ (posedge clk)
                     begin
                         WeR <= 0;
                         atualiza_pc <= 1;
+
+                        prox_extado <= decode;
                     end
                 decode:
                     begin
                         atualiza_pc <= 0;
+
+                        prox_extado <= ex;
                     end
                 ex:
                     begin
                         
+
+                        prox_extado <= wb;
                     end
                 wb:
                     begin
                         if(soma_ou_subtrai | load)
                             WeR <= 1;
+
+                        prox_extado <= fetch;
                     end
 
 
