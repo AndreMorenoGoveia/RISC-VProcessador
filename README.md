@@ -29,10 +29,18 @@
     for ativada, será trocado o sinal do B de acordo com as regras do complemento de 2 e esse número
     será adicionado ao A, gerando C como saída. Tudo é feito em tempo constante.
 
- ### Flags
+### Flags
     Definimos as flags "maior unsigned", "menor" e "igual". A partir destas, podemos fazer qualquer comparação entre as entradas A e B. Nota-se que não foram utilizadas as flags "Not Equal", "Menor unsigned" e "Maior", visto que o nosso grupo teve como objetivo simplificar a ULA.
 
- ### Program Counter
+### UC
+
+    A UC foi construída a partir de uma maquina de estados possuindo apenas 4 estados, Fetch, Decode, Execute e Write Back. Para cada estado, as execuções são realizadas no segundo always (sensível ao reset e ao estado).
+    Para o estado Fetch, atualiza_pc recebe o valor de 1 para indicar que o valor do Program Counter deve ser atualizado para a próxima instrução, após a instrução atual ter sido salva no IR.
+    Em relação ao estado Decode, atualiza_pc é mudado para 0, pois o único estado em que o valor do Program Counter deve ser atualizado é no estado Fetch.
+    Já para o estado Execute (ex),
+    Por fim, para o estado Write Back, a váriavel WeR receberá  valor de 1 apenas quando é indicada a escrita na memória. Tal ocasião ocorre quando a variável soma_ou_subtrai estiver em 1 ou quando a variável load receber 1 também. 
+
+### Program Counter
     Registrador que armazena o endereço da instrução do próximo ciclo de clock   
 
 ### ULAPC

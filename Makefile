@@ -20,17 +20,17 @@ SOMA = Processador/DataFlow/ULA/SomadorSubtrator.v
 MUXULA = Processador/DataFlow/ULA/MuxBC.v
 
 #DATAFLOW
-DF = $(RF) $(CONV) $(ULA) Processador/DataFlow/DataFlow.v
+DF = $(RF) $(CONV) $(ULA) Processador/DataFlow/fd.v
 
 
 #PROGRAM COUNTER
 PC = Processador/UC/ProgramCounter/ProgramCounter.v Processador/UC/ProgramCounter/ULAPC.v
 
 #UNIDADECONTROLE
-UC = $(PC) Processador/UC/UC.v
+UC = $(PC) Processador/UC/uc.v
 
 #PROCESSADOR
-PRO = $(DF) $(UC) Processador/Processador.v
+PRO = $(DF) $(UC) Processador/polirv.v
 
 
 #MEMORIA

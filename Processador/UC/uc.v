@@ -1,30 +1,30 @@
-module UC(clk, reset, imm_pc, opcode, funct7, funct3, soma_ou_subtrai,
-          doutPC, atualiza_pc, WeR, load);
+module uc(clk, rst_n, opcode, d_mem_we, rf_we,
+          alu_flags, alu_cmd, alu_src, pc_src,
+          rf_src);
 
-input clk, reset;
+
+
+parameter zero = 0, MSB = 1, overflow = 2, n_usado_ainda = 3;  
+input clk, rst_n;
 reg[1:0] estado;
 reg[1:0] prox_extado;
-output reg WeR;
+output reg rf_we;
 
 /* ProgramCounter */
-output reg atualiza_pc;
 wire escolhe_constante;
-output [63:0] doutPC;
 wire [63:0] doutULAPC;
-input [63:0] imm_pc;
 reg soma_imm_PC;
+
+input alu_src, pc_src, rf_src; 
+input [31:0] i_mem_data;
+output [i_addr_bits - 1: 0] i_mem_addr;
+output [d_addr_bits - 1: 0] d_mem_addr;
+inout [63: 0] d_mem_data;
+
 
 /* instrução */
 input [6:0] opcode;
-input [6:0] funct7;
-input [2:0] funct3;
 
-/* add/sub */
-output [1:0] soma_ou_subtrai;
-parameter nao = 0, soma = 1, subrtrai = 2;
-
-/* load */
-output load;
 
 parameter fetch = 0, decode = 1, ex = 2, wb = 3;
 
@@ -38,7 +38,7 @@ end
 /* Mudança de estado */
 always @ (posedge clk)
     begin
-        if(reset)
+        if(rst_n)
             begin
                 estado <= fetch;
             end
@@ -56,7 +56,7 @@ always @ (posedge clk)
 
                 fetch:
                     begin
-                        WeR <= 0;
+                        rf_we <= 0;
                         atualiza_pc <= 1;
 
                         prox_extado <= decode;
@@ -76,7 +76,7 @@ always @ (posedge clk)
                 wb:
                     begin
                         if(soma_ou_subtrai | load)
-                            WeR <= 1;
+                            rf_we <= 1;
 
                         prox_extado <= fetch;
                     end
@@ -85,8 +85,10 @@ always @ (posedge clk)
             endcase
         end
 
-        /* add/sub */
-        assign soma_ou_subtrai = opcode === 7'b0110011 ? funct7 === 7'b0000000 ? soma : subrtrai : nao;
+
+        /*add e sub */
+        assign soma_ou_subtrai = 
+
 
         /* load */
         assign load = opcode === 7'b0000011;

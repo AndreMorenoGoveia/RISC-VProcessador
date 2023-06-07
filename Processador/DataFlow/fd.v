@@ -1,14 +1,28 @@
-module DataFlow(clk, instr, soma_ou_subtrai, imm, opcode, funct7, funct3, WeR, doutULA);
+module fd #(parameter i_addr_bits = 6, 
+              parameter d_addr_bits = 6)
+              (clk, rst_n instr, opcode, rf_we, d_mem_we 
+              alu_flags, alu_cmd, alu_src, pc_src, rf_src, 
+              i_mem_data, i_mem_addr, d_mem_addr, d_mem_data);
 
 parameter I = 0, J = 1, U = 2, B = 3, S = 4;
-parameter nao = 0, soma = 1, subrtrai = 2;
+parameter R = 4'b0000, I = 4'b0001, S = 4'b0010, SB = 4'b0011, U = 4'b0100, UJ = 4'b0101;
+parameter zero = 0, MSB = 1, overflow = 2, n_usado_ainda = 3;  
 
+
+input rst_n;
 input clk;
+input alu_src, pc_src, rf_src; 
+input [31:0] i_mem_data;
+output [i_addr_bits - 1: 0] i_mem_addr;
+output [d_addr_bits - 1: 0] d_mem_addr;
+inout [63: 0] d_mem_data;
 
-
+input [3:0] alu_cmd;
+output [3:0] alu_flags;
+input d_mem_we;
 /* Banco Registradores */
 wire [4:0] Ra, Rb, Rw;
-input WeR;
+input rf_we;
 wire [63:0] dinR, douta, doutb;
 assign dinR = doutULA;
 
@@ -16,11 +30,9 @@ assign dinR = doutULA;
 wire [2:0] select_imm_conv;
 wire [63:0] imm_conv;
 
-
 /* ULA */
 wire [63:0] imm_ula;
-input [1:0] soma_ou_subtrai;
-output [63:0] doutULA;
+wire [63:0] doutULA;
 wire usa_imm_ula;
 wire flag_maior_igual_u, flag_menor, flag_igual;
 
