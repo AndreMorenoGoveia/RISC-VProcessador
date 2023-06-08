@@ -14,9 +14,6 @@ module polirv
     
   
   
-
-
-
     /* Conexoes entre uc e fd */
     wire [6:0] opcode;
     wire d_mem_we;
@@ -24,11 +21,6 @@ module polirv
     wire [3:0] alu_cmd;
     wire [3:0] alu_flags;
     wire alu_src, pc_src, rf_src;
-
-    
-    wire [63:0] imm_pc;
-    
-    
     
 
 

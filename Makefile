@@ -22,8 +22,11 @@ MUXULA = Processador/DataFlow/ULA/MuxBC.v
 #PROGRAM COUNTER
 PC = Processador/DataFlow/ProgramCounter/ProgramCounter.v Processador/DataFlow/ProgramCounter/ULAPC.v
 
+# Instruction Register
+IR = Processador/DataFlow/RegistradorInstrucao.v
+
 #DATAFLOW
-DF = $(RF) $(CONV) $(ULA) $(PC) Processador/DataFlow/fd.v
+DF = $(RF) $(CONV) $(ULA) $(PC) $(IR) Processador/DataFlow/fd.v
 
 
 
@@ -36,12 +39,11 @@ PRO = $(DF) $(UC) Processador/polirv.v
 
 
 #MEMORIA
-MEM = $(IM) $(DM) $(IR) Memoria/Memoria.v
+MEM = $(IM) $(DM)  Memoria/Memoria.v
 IM = Memoria/MemoriaInstrucao.v
-IR = Memoria/RegistradorInstrucao.v
 DM = Memoria/MemoriaDados.v
 
-AMBIENTE = testbench.v $(PRO) $(MEM)
+AMBIENTE = Ambiente.v $(PRO) $(MEM)
 
 riscv:
 	iverilog -o riscv.out $(AMBIENTE)

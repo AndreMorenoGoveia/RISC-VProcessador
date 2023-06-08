@@ -34,15 +34,15 @@ parameter zero = 0, MSB = 1, overflow = 2, n_usado_ainda = 3;
 /* Banco Registradores */
 wire [4:0] Ra, Rb, Rw;
 wire [63:0] dinR, douta, doutb;
-assign dinR = doutULA;
+/* Mux da entrada do banco de registradores */
+assign dinR = rf_src ? d_mem_data : dout_ULA;
 
 /* Conversor */
-wire [2:0] select_imm_conv;
 wire [63:0] imm_conv;
 
 /* ULA */
 wire [63:0] imm_ula;
-wire [63:0] doutULA;
+wire [63:0] dout_ULA;
 wire usa_imm_ula;
 wire flag_maior_igual_u, flag_menor, flag_igual;
 
@@ -79,5 +79,7 @@ ULA ula(.dina(douta), .dinb(doutb), .imm(imm_ula), .soma_ou_subtrai(soma_ou_subt
 
 ProgramCounter pc(.clk(atualiza_pc), .din(doutULAPC), .dout(doutPC));
 ULAPC ulapc(.din(doutPC), .imm(imm_pc), .soma_imm(soma_imm_PC), .dout(doutULAPC));
+
+RegistradorIntrucao IR()
 
 endmodule

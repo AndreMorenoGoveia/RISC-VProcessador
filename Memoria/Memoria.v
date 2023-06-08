@@ -1,21 +1,25 @@
-module Memoria(clk, WeDM, dinDM, doutULA, doutPC, doutIR, doutDM, atualiza_pc);
+module Memoria 
+    #(
+        parameter i_addr_bits = 6,
+        parameter d_addr_bits = 6
+    )(
+        input clk,
+        input [i_addr_bits-1:0] i_mem_addr,
+        output [31:0]           i_mem_data,
+        input                   d_mem_we,
+        input [d_addr_bits-1:0] d_mem_addr,
+        inout [63:0]            d_mem_data
+    );
     
-    input clk;
-    input WeDM;
-    input atualiza_pc;
-    input [63:0] doutPC;
-    input [63:0] dinDM;
-    input [63:0] doutULA;
-    output [31:0] doutIR;
-    output [63:0] doutDM;
+    wire [63:0] data_in;
+    assign data_in = d_mem_we ? 64'bz : d_mem_data;
 
-    wire [31:0] doutIM;
 
     /* Dados */
-    MemoriaDados DM(.addr(doutULA[7:3]), .We(WeDM), .din(dinDM), .clk(clk), .dout(doutDM));
+    MemoriaDados DM(.addr(d_mem_addr[d_addr_bits:3]), .We(d_mem_we), .din(data_in), .clk(clk), .dout(d_mem_data));
 
     /* Instruções */
-    MemoriaInstrucao IM(.addr(doutPC[6:2]), .dout(doutIM));
+    MemoriaInstrucao IM(.addr(i_mem_addr[i_addr_bits:2]), .dout(i_mem_data));
 
 
 
