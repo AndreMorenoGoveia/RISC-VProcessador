@@ -1,5 +1,5 @@
 `timescale 1ns/100ps
-module testbench;
+module Ambiente;
 
 reg clk, reset;
 
@@ -31,7 +31,7 @@ wire atualiza_pc;
 
 
 
-Processador riscv(.clk(clk), .reset(reset), .instr(instr), .doutPC(doutPC), .WeDM(WeDM),
+polirv riscv(.clk(clk), .reset(reset), .instr(instr), .doutPC(doutPC), .WeDM(WeDM),
                 .doutULA(doutULA), .dinDM(dinDM), .doutDM(doutDM), .atualiza_pc(atualiza_pc));
 
 Memoria mem(.clk(clk), .WeDM(WeDM), .dinDM(dinDM), .doutULA(doutULA), .doutPC(doutPC),

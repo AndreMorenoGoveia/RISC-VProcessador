@@ -19,15 +19,17 @@ FLAGS = Processador/DataFlow/ULA/Flags.v
 SOMA = Processador/DataFlow/ULA/SomadorSubtrator.v
 MUXULA = Processador/DataFlow/ULA/MuxBC.v
 
-#DATAFLOW
-DF = $(RF) $(CONV) $(ULA) Processador/DataFlow/fd.v
-
-
 #PROGRAM COUNTER
-PC = Processador/UC/ProgramCounter/ProgramCounter.v Processador/UC/ProgramCounter/ULAPC.v
+PC = Processador/DataFlow/ProgramCounter/ProgramCounter.v Processador/DataFlow/ProgramCounter/ULAPC.v
+
+#DATAFLOW
+DF = $(RF) $(CONV) $(ULA) $(PC) Processador/DataFlow/fd.v
+
+
+
 
 #UNIDADECONTROLE
-UC = $(PC) Processador/UC/uc.v
+UC =  Processador/UC/uc.v
 
 #PROCESSADOR
 PRO = $(DF) $(UC) Processador/polirv.v

@@ -16,7 +16,7 @@ module Memoria(clk, WeDM, dinDM, doutULA, doutPC, doutIR, doutDM, atualiza_pc);
 
     /* Instruções */
     MemoriaInstrucao IM(.addr(doutPC[6:2]), .dout(doutIM));
-    RegistradorInstrucao IR(.din(doutIM), .dout(doutIR), .clk(atualiza_pc));
+
 
 
 endmodule
