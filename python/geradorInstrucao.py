@@ -43,7 +43,7 @@ class storeword:
     upcode = "0100011"
     funct3 = "010"
 
-    # mem(rs2 + const) = rs1
+    # mem(rs1 + const) = rs2
     def faz_instrucao(rs1, rs2, const):
         imm = decimal_binario_12bits(const)[::-1]
         instrucao = "32'b" + imm[5:12][::-1] + bin(rs2)[2:].zfill(5) + bin(rs1)[2:].zfill(5) + storeword.funct3 + imm[0:5][::-1] + storeword.upcode
@@ -189,6 +189,4 @@ class jalr:
 
 
 
-
-
-
+jal.faz_instrucao(3, 4561)

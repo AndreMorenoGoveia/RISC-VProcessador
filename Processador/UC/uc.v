@@ -97,8 +97,8 @@ always @ (posedge clk, rst_n)
 assign rf_we    = rf_we_reg,
        d_mem_we = d_mem_we_reg;
 
-assign rf_src = (alu_cmd === S),
-       pc_src = (alu_cmd === UJ) | (alu_cmd === SB & zero),
+assign rf_src = (opcode === 7'b0000011),
+       pc_src = (alu_cmd === UJ) | (alu_cmd === SB & alu_flags[zero]),
        alu_src = (alu_cmd === S) | (alu_cmd === I);
 
 

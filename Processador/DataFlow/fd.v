@@ -79,6 +79,10 @@ assign i_mem_addr = dout_PC[i_addr_bits-1:0];
 assign d_mem_addr = dout_ULA[d_addr_bits-1:0];
 
 
+/* Memoria de dados */
+assign d_mem_data = d_mem_we ? doutb : 64'bz;
+
+
 
 
 BancoRegistradores RF(.Ra(rs1), .Rb(rs2), .clk(clk), .We(rf_we), .din(dinR),

@@ -23,9 +23,10 @@ assign dout = memoria[addr];
 initial
 begin
 
-    memoria[6] = 51;
-    memoria[2] = 94;
-    memoria[5] = 18;
+    memoria[0] = 51;
+    memoria[1] = 94;
+    memoria[2] = 18;
+    memoria[3] = -47000;
 
 end
 

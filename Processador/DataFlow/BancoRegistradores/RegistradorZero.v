@@ -1,5 +1,5 @@
 module RegistradorZero (output [63:0] out);
     
-    assign out = 153;
+    assign out = 0;
 
 endmodule
