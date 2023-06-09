@@ -14,10 +14,9 @@ S = Processador/DataFlow/Conversores/ImediatoS.v
 U = Processador/DataFlow/Conversores/ImediatoU.v
 
 #ULA
-ULA = $(FLAGS) $(SOMA) $(MUXULA) Processador/DataFlow/ULA/ULA.v
+ULA = $(FLAGS) $(SOMA) Processador/DataFlow/ULA/ULA.v
 FLAGS = Processador/DataFlow/ULA/Flags.v
 SOMA = Processador/DataFlow/ULA/SomadorSubtrator.v
-MUXULA = Processador/DataFlow/ULA/MuxBC.v
 
 #PROGRAM COUNTER
 PC = Processador/DataFlow/ProgramCounter/ProgramCounter.v Processador/DataFlow/ProgramCounter/ULAPC.v

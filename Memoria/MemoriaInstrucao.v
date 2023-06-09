@@ -1,8 +1,13 @@
-module MemoriaInstrucao #(parameter BITS = 32, parameter DEPTH = 2000) 
+module MemoriaInstrucao 
+#(
+    parameter BITS = 32,
+    parameter DEPTH = 2000,
+    parameter i_addr_bits = 6
+) 
 (addr, dout);
 
 
-input [4:0] addr;
+input [i_addr_bits-2:0] addr;
 input clk;
 output [BITS-1:0] dout;
 

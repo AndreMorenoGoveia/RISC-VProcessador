@@ -12,7 +12,7 @@ always #500 clk = ~clk;
 initial 
 begin
     $dumpfile("riscv.vcd");
-    $dumpvars(0, testbench);
+    $dumpvars(0, Ambiente);
     rst_n <= 0;
     clk <= 0;
     $display("Hello World");

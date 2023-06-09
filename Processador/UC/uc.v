@@ -7,8 +7,6 @@ module uc(
     output alu_src, pc_src, rf_src          // Seletor dos MUXes
 );  
 
-
-
 parameter zero = 0, MSB = 1, overflow = 2, n_usado_ainda = 3;
 
 
@@ -16,11 +14,6 @@ parameter fetch = 0, decode = 1, ex = 2, wb = 3;
 reg[1:0] estado;
 reg[1:0] prox_extado;
 
-
-/* ProgramCounter */
-wire escolhe_constante;
-wire [63:0] doutULAPC;
-reg soma_imm_PC;
 
 
 
@@ -31,12 +24,10 @@ reg soma_imm_PC;
 initial
 begin
     prox_extado <= fetch;
-    atualiza_pc <= 0;
-    soma_imm_PC <= 0;
 end
 
 /* Mudança de estado */
-always @ (posedge clk)
+always @ (posedge clk, rst_n)
     begin
         if(rst_n)
             begin
@@ -50,20 +41,18 @@ always @ (posedge clk)
     end
 
     /* Ações do estado */
-    always @ (estado, reset)
+    always @ (estado)
         begin
             case(estado)
 
                 fetch:
                     begin
-                        rf_we <= 0;
-                        atualiza_pc <= 1;
+                        //rf_we <= 0;
 
                         prox_extado <= decode;
                     end
                 decode:
                     begin
-                        atualiza_pc <= 0;
 
                         prox_extado <= ex;
                     end
@@ -75,8 +64,6 @@ always @ (posedge clk)
                     end
                 wb:
                     begin
-                        if(soma_ou_subtrai | load)
-                            rf_we <= 1;
 
                         prox_extado <= fetch;
                     end

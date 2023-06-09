@@ -1,7 +1,12 @@
-module MemoriaDados #(parameter BITS = 64, parameter DEPTH = 32) 
+module MemoriaDados 
+#(
+    parameter BITS = 64,
+    parameter DEPTH = 32,
+    parameter d_addr_bits = 6
+    ) 
 (addr, We, din, clk, dout);
 
-input [4:0] addr;
+input [d_addr_bits-3:0] addr;
 input We;
 input clk;
 input [BITS-1:0] din;
