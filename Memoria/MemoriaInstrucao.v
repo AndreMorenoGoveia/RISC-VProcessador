@@ -7,7 +7,7 @@ module MemoriaInstrucao
 (addr, dout);
 
 
-input [i_addr_bits-2:0] addr;
+input [i_addr_bits-3:0] addr;
 input clk;
 output [BITS-1:0] dout;
 

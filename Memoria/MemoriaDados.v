@@ -6,7 +6,7 @@ module MemoriaDados
     ) 
 (addr, We, din, clk, dout);
 
-input [d_addr_bits-3:0] addr;
+input [d_addr_bits-4:0] addr;
 input We;
 input clk;
 input [BITS-1:0] din;

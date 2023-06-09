@@ -70,8 +70,8 @@ assign atualiza_pc = d_mem_we | rf_we;
 
 
 /* Decidindo se subtrai */
-assign subtrai = ((alu_cmd === R) & (funct7 === 7'b0100000) & (funct3 === 3'b000)) |
-                 (alu_cmd === SB);
+assign subtraindo = ((alu_cmd === R) & (funct7 === 7'b0100000) & (funct3 === 3'b000)) |
+                    (alu_cmd === SB);
 
 
 /* Endereços de memória */

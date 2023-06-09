@@ -16,10 +16,10 @@ module Memoria
 
 
     /* Dados */
-    MemoriaDados DM(.addr(d_mem_addr[d_addr_bits:3]), .We(d_mem_we), .din(data_in), .clk(clk), .dout(d_mem_data));
+    MemoriaDados DM(.addr(d_mem_addr[d_addr_bits-1:3]), .We(d_mem_we), .din(data_in), .clk(clk), .dout(d_mem_data));
 
     /* Instruções */
-    MemoriaInstrucao IM(.addr(i_mem_addr[i_addr_bits:2]), .dout(i_mem_data));
+    MemoriaInstrucao IM(.addr(i_mem_addr[i_addr_bits-1:2]), .dout(i_mem_data));
 
 
 
