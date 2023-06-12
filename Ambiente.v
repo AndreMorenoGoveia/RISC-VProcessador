@@ -16,7 +16,7 @@ begin
     rst_n <= 0;
     clk <= 0;
     $display("Hello World");
-    #1000000
+    #10000000
     $finish;
 
     

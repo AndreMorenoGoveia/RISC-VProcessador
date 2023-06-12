@@ -74,7 +74,7 @@ always @ (posedge clk, rst_n)
                     end
                 ex:
                     begin
-                        if(alu_cmd !== S)
+                        if((alu_cmd !== S) & (alu_cmd !== SB))
                             rf_we_reg <= 1;
                         else
                             d_mem_we_reg <= 1;

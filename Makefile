@@ -28,6 +28,10 @@ IR = Processador/DataFlow/RegistradorInstrucao.v
 DF = $(RF) $(CONV) $(ULA) $(PC) $(IR) Processador/DataFlow/fd.v
 
 
+# Emprestimo
+DFE = fd.v
+PROE = $(DFE) $(UC) Processador/polirv.v
+AMBIENTEE = Ambiente.v $(PROE) $(MEM)
 
 
 #UNIDADECONTROLE
@@ -52,4 +56,13 @@ exec: riscv
 
 
 clean:
-	rm -f riscv.out riscv.vcd
+	rm -f *.out *.vcd
+
+E: riscvE execE
+	
+
+riscvE:
+	iverilog -o riscvE.out $(AMBIENTEE)
+
+execE:
+	vvp riscvE.out
