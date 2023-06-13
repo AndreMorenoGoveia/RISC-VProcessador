@@ -158,6 +158,18 @@ def jalr(rd, rs1, const):
 
 i = 0
 
+def OR(rd, rs1, rs2):
+    global i
+    instrucao = "32'b" + "0000000" + bin(rs2)[2:].zfill(5) + bin(rs1)[2:].zfill(5) + "110" + bin(rd)[2:].zfill(5) + "0110011"
+    print(f'memoria[{i}] <= ' + instrucao + ';')
+    i+=1
+
+def AND(rd, rs1, rs2):
+    global i
+    instrucao = "32'b" + "0000000" + bin(rs2)[2:].zfill(5) + bin(rs1)[2:].zfill(5) + "111" + bin(rd)[2:].zfill(5) + "0110011"
+    print(f'memoria[{i}] <= ' + instrucao + ';')
+    i+=1
+
 lw(1, 0, 0)
 lw(2,0,8)
 add(4,2,0)

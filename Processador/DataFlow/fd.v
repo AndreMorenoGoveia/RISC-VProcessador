@@ -83,6 +83,14 @@ assign d_mem_addr = dout_ULA[d_addr_bits-1:0];
 assign d_mem_data = d_mem_we ? doutb : 64'bz;
 
 
+/* Decide se soma/subtrai, AND ou OR */
+parameter SUBSOMA = 0, AND = 1, OR = 2;  
+wire [1:0] operacao;
+assign operacao = (alu_cmd === R) ?
+       funct3 === 3'b110 ? 2 :
+       funct3 === 3'b111 ? 1 :
+       0 : 0;
+
 
 
 BancoRegistradores RF(.Ra(rs1), .Rb(rs2), .clk(clk), .We(rf_we), .din(dinR),
@@ -91,7 +99,7 @@ BancoRegistradores RF(.Ra(rs1), .Rb(rs2), .clk(clk), .We(rf_we), .din(dinR),
 Conversor conv(.instr(instr), .select_imm(alu_cmd), .imm(imm_conv));
 
 ULA ula(.dina(douta), .dinb(doutb), .imm(imm_conv), .subtraindo(subtraindo),
-        .alu_src(alu_src), .dout(dout_ULA), .flag_maior_igual_u(flag_maior_igual_u),
+        .alu_src(alu_src), .operacao(operacao), .dout(dout_ULA), .flag_maior_igual_u(flag_maior_igual_u),
         .flag_igual(flag_igual), .flag_menor(flag_menor));
 
 ProgramCounter pc(.clk(atualiza_pc), .din(dout_ULAPC), .dout(dout_PC));
