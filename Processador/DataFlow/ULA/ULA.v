@@ -28,7 +28,7 @@ module ULA  #(parameter BITS = 64)
     assign dout_and = fator_1 & fator_2;
 
     /* OR */
-    assign dout_and = fator_1 | fator_2;
+    assign dout_or = fator_1 | fator_2;
 
     SomadorSubtrator soma_sub(.subtraindo(subtraindo), .A(fator_1), .B(fator_2), .S(dout_s));
 
