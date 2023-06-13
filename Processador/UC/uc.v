@@ -76,7 +76,7 @@ always @ (posedge clk, rst_n)
                     begin
                         if((alu_cmd !== S) & (alu_cmd !== SB))
                             rf_we_reg <= 1;
-                        else
+                        else if(alu_cmd === S)
                             d_mem_we_reg <= 1;
                             
                         prox_extado <= wb;

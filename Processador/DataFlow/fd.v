@@ -66,7 +66,16 @@ assign funct7 = instr[31:25];
 /* program counter */
 wire [63:0] dout_PC;
 wire [63:0] dout_ULAPC;
-assign atualiza_pc = d_mem_we | rf_we;
+reg [1:0] ordem;
+assign atualiza_pc = ordem === 2;
+initial ordem <= 0;
+always @ (posedge clk)
+    begin
+        if(ordem === 3)
+            ordem <= 0;
+        else
+            ordem <= ordem + 1;
+    end
 
 
 /* Decidindo se subtrai */
