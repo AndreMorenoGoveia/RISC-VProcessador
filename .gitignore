@@ -1,4 +1,6 @@
 *.out
 *.vcd
+*.exe
 teste.py
 Entregas
+*.c
