@@ -1,19 +1,20 @@
 module ULAUC(
-    input [22:0]  a,
-    input [22:0]  b,
+    input [23:0]  a,
+    input [23:0]  b,
+    input clk,
     input multiplica,
     input start,
-    output reg [22:0] dout,
-    output wire c_out,
+    output reg [23:0] dout,
+    output reg c_out,
     output reg finish
 );
 
 reg [2:0] estado_atual;
 reg [2:0] prox_estado;
-parameter inicio, somando, teste_mult, mutiplicando, fim;
+parameter inicio = 0, somando = 1, teste_mult = 2, multiplicando = 3, fim = 4;
 
 reg [4:0] bits_mult;
-reg [22:0] parcela;
+reg [23:0] parcela;
 
  
 
@@ -71,7 +72,7 @@ always @ (estado_atual)
                                 parcela <= 0;
                             else
                                 parcela <= b;
-                            prox_estado <= multiplicando;
+                                prox_estado <= multiplicando;
                         end
                     
                 end

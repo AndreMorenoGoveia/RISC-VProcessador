@@ -48,6 +48,10 @@ DM = Memoria/MemoriaDados.v
 
 AMBIENTE = Ambiente.v $(PRO) $(MEM)
 
+
+# Floating Point
+FP = UnidadePontoFlt/testbench.v UnidadePontoFlt/ULAUC.v UnidadePontoFlt/UnidadePontoFlt.v
+
 riscv:
 	iverilog -o riscv.out $(AMBIENTE)
 
@@ -66,3 +70,12 @@ riscvE:
 
 execE:
 	vvp riscvE.out
+
+FP: float_cmp float_exec 
+
+float_cmp:
+	iverilog -o float_exec.out $(FP)
+
+
+float_exec:
+	vvp float_exec.out
