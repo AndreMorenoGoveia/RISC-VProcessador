@@ -5,7 +5,6 @@ module ULAUC(
     input multiplica,
     input start,
     output reg [27:0] dout,
-    output reg c_out,
     output reg finish
 );
 
@@ -17,7 +16,7 @@ reg [4:0] bits_mult;
 reg [26:0] parcela_mult;
 
 wire [26:0] parcela_shift;
-assign parcela_shift = {b,3'b0} >> (22 - bits_mult);
+assign parcela_shift = {b,3'b0} >> (23 - bits_mult);
 
 
  
@@ -59,17 +58,13 @@ always @ (estado_atual)
                 begin
                     
                     dout <= {{1'b0,a} + {1'b0,b}, 3'b0};
-                    if(a[22] & b[22])
-                        c_out <= 1;
-                    else
-                        c_out <= 0;
                     prox_estado <= fim;
 
                 end
             
             teste_mult:
                 begin
-                    if(bits_mult > 22)
+                    if(bits_mult > 23)
                         prox_estado <= fim;
                     else
                         begin
