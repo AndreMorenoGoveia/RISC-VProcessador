@@ -45,7 +45,7 @@ wire [23:0] entrada1, entrada2;
 assign entrada1 = (escolhe_entrada1 ? fract_a : fract_b) >> shift_right;
 assign entrada2 = escolhe_entrada2 ? fract_a : fract_b;
 
-wire [22:0] saida_ula;
+wire [27:0] saida_ula;
 
 ULAUC ulauc(.a(entrada1), .b(entrada2), .clk(clk),
             .multiplica(multiplica), .start(start),
