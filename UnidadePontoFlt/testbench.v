@@ -15,10 +15,10 @@ begin
     $dumpvars(0, testbench);
 
     clk <= 0;
-    a <= 32'b00111110100110011001100110011010;//0.3
-    b <= 32'b00111110010011001100110011001101;//0.2
+    a <= 32'b01000001010011101110000101001000;//12.93
+    b <= 32'b11000001100101011001100110011010;//-18.7
     #1000 
-    multiplicando <= 1;
+    multiplicando <= 0;
     #10
     start <= 1;
 
@@ -30,7 +30,7 @@ end
 always #500 clk <= ~clk;
 
 
-UnidadePontoFlt FP(.clk(clk), .a(a), .b(b), .start(start),
+FPUnit FP(.clk(clk), .a(a), .b(b), .start(start),
                    .multiplicando(multiplicando), .s(s),
                    .finish(finish));
 
