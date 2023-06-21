@@ -97,7 +97,7 @@ ULA_Seq ula_seq(
     .b(entrada_ULA_b),
     .clk(clk),
     .multiplica(multiplicando),
-    .subtraindo(1'b0),
+    .subtraindo(sinal_op),
     .start(start),
     .dout(saida_ULA_Seq),
     .finish(finish_ula)
@@ -118,47 +118,22 @@ mux_ab #(8) mux_exp(
     .s(maior_exp)
 );
 
-/* Mux expoente atual */
-wire [7:0] exp_atual;
-mux_ab #(8) mux_exp_atual(
-    .a(maior_exp),
-    .b(exp_s),
-    .escolhe_a(usa_arr),
-    .s(exp_atual)
-);
-
-/* Carry out */
-wire c_out;
-wire c_out_ula;
-assign c_out = fract_shift[27],
-       c_out_ula = saida_ULA_Seq[27];
-
-/* Subtraindo 1 da saída do mux */
-wire [7:0] exp_sub;
-wire sub_habilitada;
-assign exp_sub = exp_atual - ((~c_out) & (~c_out_ula));
 
 
-/* mux fract atual */
-wire [27:0] fract_shift;
-mux_ab #(28) mux_fract_atual(
-    .a(fract_in),
-    .b(saida_ULA_Seq),
-    .escolhe_a(usa_arr),
-    .s(fract_shift)
-);
 
-/* Shift */
-wire [27:0] fract_in;
-assign fract_in = fract_shift >> (~c_out);
 
 /* Regularizador da saída */
 Arrendonda arr(
-    .fract_in(fract_in),
+    .fract_in(saida_ULA_Seq),
     .reg_exp(reg_exp),
-    .exp_sub(maior_exp),
+    .maior_exp(maior_exp),
+    .sinal_a(sinal_a),
+    .sinal_b(sinal_b),
     .multiplicando(multiplicando),
     .sinal_op(sinal_op),
+    .start(finish_ula),
+    .clk(clk),
+    .finish(finish),
     .sinal_s(sinal_s),
     .exp_arr(exp_arr),
     .fract_s(fract_s)
@@ -167,7 +142,7 @@ Arrendonda arr(
 
 wire sinal_s;
 wire [7:0] exp_s, exp_arr;
-assign exp_s = exp_arr + 127;
+assign exp_s = (multiplicando ? reg_exp : exp_arr) + 127;
 wire[22:0] fract_s;
 assign s = {sinal_s, exp_s, fract_s};
 
@@ -318,7 +293,7 @@ always @ (estado_atual)
                 begin
                     /* Somando/subtraindo */
                     if(subtraindo)
-                        dout <= {{1'b0,a} - {1'b0,b}, 3'b0};
+                        dout <= {{1'b0,b} - {1'b0,a}, 3'b0};
                     else
                         dout <= {{1'b0,a} + {1'b0,b}, 3'b0};
                     prox_estado <= fim;
@@ -369,23 +344,94 @@ endmodule
 module Arrendonda(
     input [27:0] fract_in,
     input [7:0] reg_exp,
-    input [7:0] exp_sub,
+    input [7:0] maior_exp,
+    input sinal_a,
+    input sinal_b,
     input multiplicando,
     input sinal_op,
+    input start,
+    input clk,
+    output reg finish,
     output        sinal_s,
-    output [7:0]  exp_arr,
+    output reg [7:0] exp_arr,
     output [22:0] fract_s
 );
 
+reg [27:0] fract_atual;
+
+
+
+/* Alternador de estado */
+always @ (posedge clk)
+    begin
+        estado_atual <= prox_estado;
+    end
+
+always @ (posedge start) 
+    begin
+        prox_estado <= inicio;
+        finish <= 0;
+    end
+
+
+reg [1:0] estado_atual, prox_estado;
+parameter inicio = 0, opera1 = 1, opera2 = 2, fim = 3;
+
+always @ (estado_atual)
+begin
+case(estado_atual)
+        inicio:
+            begin
+                prox_estado <= opera1;
+                exp_arr <= maior_exp;
+                fract_atual <= fract_in;
+            end 
+        opera1:
+            begin
+                if(fract_atual[27])
+                    begin
+                        prox_estado <= fim;
+                        exp_arr <= exp_arr + 1;
+                    end
+                else
+                    begin
+                        prox_estado <= opera2;
+                        exp_arr <= exp_arr - 1;
+                        fract_atual <= fract_atual << 1;
+                    end
+                
+            end
+        opera2:
+            begin
+                if(fract_atual[27])
+                    begin
+                        prox_estado <= fim;
+                        exp_arr <= exp_arr + 1;
+                    end
+                else
+                    begin
+                        prox_estado <= opera1;
+                        exp_arr <= exp_arr - 1;
+                        fract_atual <= fract_atual << 1;
+                    end
+                
+            end
+
+        fim:
+            begin
+                finish <= 1;
+            end
+endcase
+end
 wire c_out;
 assign c_out = fract_in[27];
 
-assign sinal_s = multiplicando ? sinal_op : 0;
+assign sinal_s = multiplicando ? sinal_op : 
+       reg_exp[7] ? sinal_b : sinal_a;
 
-assign exp_arr = (multiplicando ? reg_exp : (exp_sub + 2));
 
 
 /* Arredondando a saída */
-assign fract_s = fract_in[26:4] + fract_in[3];
+assign fract_s = fract_atual[26:4] ;
 
 endmodule
