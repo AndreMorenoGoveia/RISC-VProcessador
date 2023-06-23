@@ -127,6 +127,8 @@ Arrendonda arr(
     .fract_in(saida_ULA_Seq),
     .reg_exp(reg_exp),
     .maior_exp(maior_exp),
+    .fract_a(fract_a),
+    .fract_b(fract_b),
     .sinal_a(sinal_a),
     .sinal_b(sinal_b),
     .multiplicando(multiplicando),
@@ -293,7 +295,7 @@ always @ (estado_atual)
                 begin
                     /* Somando/subtraindo */
                     if(subtraindo)
-                        dout <= {{1'b0,b} - {1'b0,a}, 3'b0};
+                        dout <= {{1'b0,a} - {1'b0,b}, 3'b0};
                     else
                         dout <= {{1'b0,a} + {1'b0,b}, 3'b0};
                     prox_estado <= fim;
@@ -345,6 +347,8 @@ module Arrendonda(
     input [27:0] fract_in,
     input [7:0] reg_exp,
     input [7:0] maior_exp,
+    input [23:0] fract_a,
+    input [23:0] fract_b,
     input sinal_a,
     input sinal_b,
     input multiplicando,
@@ -427,9 +431,9 @@ wire c_out;
 assign c_out = fract_in[27];
 
 assign sinal_s = multiplicando ? sinal_op : 
-       reg_exp[7] ? sinal_b : sinal_a;
-
-
+       reg_exp[7] ? sinal_b : 
+       reg_exp === 0 ? (fract_a > fract_b ? sinal_a : sinal_b) :
+       sinal_a;
 
 /* Arredondando a saída */
 assign fract_s = fract_atual[26:4] ;
