@@ -1,12 +1,16 @@
 module FPUnit(
     input clk,
+    input rst,
     input [31:0] a,
     input [31:0] b,
     input start,
-    input multiplicando,
+    input [1:0] opcode,
     output [31:0] s,
-    output wire finish
+    output wire done
 );
+
+wire multiplicando;
+assign multiplicando = opcode[1];
 
 /* Separando os sinais de entrada */
 wire sinal_a, sinal_b;
@@ -26,16 +30,32 @@ assign fract_a[23] = 1, fract_b[23] = 1,
 wire subtraindo;
 wire escolhe_entrada_shift, escolhe_entrada_b;
 wire escolhe_maior_exp;
+wire subtraindo_ULA_exp;
 UC uc(
-    .multiplicando(multiplicando),
-    .sinal_exp(sinal_exp),
-    .finish_ula(finish_ula),
     .clk(clk),
-    .subtraindo(subtraindo),
+    .rst(rst),
+    .start(start),
+    .finish(done),
+    .multiplicando(multiplicando),
+
+    .sinal_exp(sinal_exp),
+    .subtraindo_ULA_exp(subtraindo_ULA_exp),
+    
+    
     .escolhe_entrada_shift(escolhe_entrada_shift),
     .escolhe_entrada_b(escolhe_entrada_b),
+    .bits_mult(bits_mult_reg),
+    .load_bits_mult(load_bits_mult),
+    .load_mult(load_mult),
+    
+    .c_out(c_out),
+    .c_out_arr(c_out_arr),
+    .retorna_arr(retorna_arr),
     .escolhe_maior_exp(escolhe_maior_exp),
-    .usa_arr(usa_arr)
+    .usa_arredonda(usa_arredonda),
+    
+    .float_s(float_s),
+    .s(s)
 );
 
 /* ULA Exponente */
@@ -43,15 +63,15 @@ wire [7:0] exp_r;
 ULA_exp ulaexp(
     .exp_a(exp_a),
     .exp_b(exp_b),
-    .subtraindo(subtraindo),
+    .subtraindo(subtraindo_ULA_exp),
     .exp_r(exp_r)
 );
 
 
 
 /* Registrador do expoente */
-reg [7:0] reg_exp;
-always @ (posedge clk) reg_exp <= exp_r;
+Registrador #(8) r_exp(.din(exp_r), .clk(clk), .load(1'b1), .dout(reg_exp));
+wire [7:0] reg_exp;
 wire sinal_exp;
 assign sinal_exp = reg_exp[7];
 
@@ -90,17 +110,20 @@ Shift #(24) Shift_ULA_Seq(
 
 
 /* ULA_Seq */
-wire finish_ula;
+wire load_mult;
+wire load_bits_mult;
+wire [4:0] bits_mult_reg;
 wire [27:0] saida_ULA_Seq;
 ULA_Seq ula_seq(
     .a(entrada_ULA_a),
     .b(entrada_ULA_b),
     .clk(clk),
-    .multiplica(multiplicando),
+    .multiplicando(multiplicando),
+    .load_mult(load_mult),
+    .load_bits_mult(load_bits_mult),
     .subtraindo(sinal_op),
-    .start(start),
-    .dout(saida_ULA_Seq),
-    .finish(finish_ula)
+    .bits_mult_reg(bits_mult_reg),
+    .dout(saida_ULA_Seq)
 );
 
 
@@ -118,74 +141,281 @@ mux_ab #(8) mux_exp(
     .s(maior_exp)
 );
 
+/* Mux expoente (ecolhe entre o expoente do
+                 arredonda e o da ULA) */
+wire [7:0] exp_atual;
+wire [7:0] exp_arr;
+mux_ab #(8) mux_exp_arr(
+    .a(exp_arredonda),
+    .b(maior_exp),
+    .escolhe_a(usa_arredonda),
+    .s(exp_atual)
+);
 
 
+/* Subtrator de expoente */
+wire [7:0] exp_sub;
+wire retorna_arr;
+assign exp_sub = retorna_arr ? exp_atual + usa_arredonda : exp_atual - usa_arredonda;
+
+/* Mux fract (ecolhe entre o fract do
+                 arredonda e o da ULA) */
+wire [27:0] fract_atual;
+wire [27:0] fract_arredonda;
+mux_ab #(28) mux_fract_arr(
+    .a(fract_arredonda),
+    .b(saida_ULA_Seq),
+    .escolhe_a(usa_arredonda),
+    .s(fract_atual)
+);
+
+/* Shiftador de fract */
+wire [27:0] fract_shift;
+assign fract_shift = retorna_arr ? fract_atual >> usa_arredonda : fract_atual << usa_arredonda;
 
 
-/* Regularizador da saída */
+/* Arredondador */
+wire [7:0] exp_arredonda;
+wire c_out, c_out_arr;
+wire [31:0] float_s;
+
 Arrendonda arr(
-    .fract_in(saida_ULA_Seq),
+    .clk(clk),
+
+    .fract_in(fract_shift),
+    .exp_in(exp_sub),
+
+    .multiplicando(multiplicando),
     .reg_exp(reg_exp),
-    .maior_exp(maior_exp),
+
     .fract_a(fract_a),
     .fract_b(fract_b),
     .sinal_a(sinal_a),
     .sinal_b(sinal_b),
-    .multiplicando(multiplicando),
-    .sinal_op(sinal_op),
-    .start(finish_ula),
-    .clk(clk),
-    .finish(finish),
-    .sinal_s(sinal_s),
-    .exp_arr(exp_arr),
-    .fract_s(fract_s)
+
+    .c_out(c_out),
+    .c_out_arr(c_out_arr),
+
+    .fract_atual(fract_arredonda),
+    .exp_s(exp_arredonda),
+
+    .s(float_s)
 );
 
 
 wire sinal_s;
-wire [7:0] exp_s, exp_arr;
-assign exp_s = (multiplicando ? reg_exp : exp_arr) + 127;
+wire [7:0] exp_s;
 wire[22:0] fract_s;
-assign s = {sinal_s, exp_s, fract_s};
 
 
 endmodule
 
 
 module UC(
-    input multiplicando,
-    input sinal_exp,
-    input finish_ula,
     input clk,
-    output subtraindo,
-    output escolhe_entrada_shift,
-    output escolhe_entrada_b,
+    input rst,
+    input start,
+    output reg finish,
+    input multiplicando, //Entradas operação
+
+    input sinal_exp, //ULA COMB
+    output subtraindo_ULA_exp,
+
+    output escolhe_entrada_shift, //ULA SEQ
+    output escolhe_entrada_b, 
+    input [4:0] bits_mult,
+    output reg load_bits_mult,
+    output reg load_mult,
+    
+    input c_out, //Arredonda
+    input c_out_arr,
+    output reg retorna_arr,    
     output escolhe_maior_exp,
-    output usa_arr,
-    output reg finish
+    output reg usa_arredonda,
+
+    input [31:0] float_s,
+    output reg [31:0] s//Saída
 );
 
+/** Decisores combinatórios **/
 /* Controle ULA_exp */
-assign subtraindo = ~multiplicando;
+assign subtraindo_ULA_exp = ~multiplicando;
 
 /* Controle muxes da ULA_Seq */
 assign escolhe_entrada_shift =  sinal_exp,
        escolhe_entrada_b     = ~sinal_exp;
 
+
 /* Controle mux expoente */
 assign escolhe_maior_exp = ~sinal_exp;
 
-/* Controle mux expoente atual/sub */
-assign usa_arr = finish_ula;
+
+/** Decisores sequenciais **/
+
+/* Estados */
+/* Estados */
+reg [2:0] estado_atual;
+reg [2:0] prox_estado;
+parameter inicio = 0,  multiplica1 = 1, multiplica2 = 2, inicio_arredonda = 3, arredonda1 = 4, arredonda2 = 5, fim = 6;
 
 
+/* Alternador de estado */
+always @ (posedge clk, rst)
+    begin
+        if(rst)
+            estado_atual <= inicio;
+        else
+            estado_atual <= prox_estado;
+    end
+
+/* Processo de início da operação */
+always @ (posedge start)
+    begin
+        prox_estado <= inicio;
+        finish <= 0;
+        s <= 0;
+    end
+
+/* Máquina de estado */
+always @ (estado_atual, c_out, c_out_arr)
+    begin
+        case (estado_atual)
+
+            inicio:
+                begin
+                    if(start)
+                        begin
+                            finish <= 0;
+                            if(multiplicando)
+                                begin
+                                    /* Iniciando os parâmetros da multiplicação */
+                                    load_mult <= 0;
+                                    load_bits_mult <= 0;
+                                    prox_estado <= multiplica1;
+
+                                end
+                            else
+                                prox_estado <= inicio_arredonda;
 
 
-/* Operação finalizada */
+                        end
+                end
+            
+            multiplica1:
+                begin
+                    /* Testando para obter a operação atual
+                       da multiplicação */
+                    if(bits_mult > 23)
+                        begin
+                            load_mult <= 0;
+                            load_bits_mult <= 0;
+                            prox_estado <= inicio_arredonda;
+                        end
+                        
+                    else
+                        begin
+                            load_mult <= 1;
+                            load_bits_mult <= 1;
+                            prox_estado <= multiplica2;
+                        end
+                end
+            multiplica2:
+                begin
+                    /* Testando para obter a operação atual
+                       da multiplicação */
+                    if(bits_mult > 23)
+                        begin
+                            load_mult <= 0;
+                            load_bits_mult <= 0;
+                            prox_estado <= inicio_arredonda;
+                        end
+                        
+                    else
+                        begin
+                            load_mult <= 1;
+                            load_bits_mult <= 1;
+                            prox_estado <= multiplica1;
+                        end
+                    
+                end
+
+            inicio_arredonda:
+                begin
+                    retorna_arr <= 0;
+                    usa_arredonda <= 0;
+                    prox_estado <= arredonda1;
+                end
+
+            arredonda1:
+                begin
+                    usa_arredonda <= 1;
+                    if(c_out_arr)
+                        begin
+                            retorna_arr <= 1;
+                            prox_estado <= arredonda2;
+                        end
+                    else if(c_out)
+                        begin
+                            s <= float_s;
+                            prox_estado <= fim;
+                        end
+                    else
+                        begin
+                            retorna_arr <= 0;
+                            prox_estado <= arredonda2;
+                        end
+                    
+                end
+            
+            arredonda2:
+                begin
+                    if(c_out_arr)
+                        begin
+                            retorna_arr <= 1;
+                            prox_estado <= arredonda1;
+                        end
+                    else if(c_out)
+                        begin
+                            s <= float_s;
+                            prox_estado <= fim;
+                        end
+                    else
+                        begin
+                            retorna_arr <= 0;
+                            prox_estado <= arredonda1;
+                        end
+                    
+                end
+
+            fim:
+                begin
+                    /* Enviando a flag de finalizado */
+                    finish <= 1;
+                end
+
+        endcase
+
+    end
+
+endmodule
+
+
+module Registrador #(parameter BITS = 23) 
+(
+    input [BITS-1:0] din,
+    input clk,
+    input load,
+    output [BITS-1:0] dout
+);
+
+reg [BITS-1:0] dado;
+assign dout = dado;
+initial dado <= 0;
+
 always @ (posedge clk)
     begin
-        if(finish_ula)
-            finish <= 1;
+        if(load)
+            dado <= din;
     end
 
 endmodule
@@ -230,212 +460,95 @@ module ULA_Seq(
     input [23:0]  a,
     input [23:0]  b,
     input clk,
-    input multiplica,
+    input multiplicando,
+    input load_mult,
+    input load_bits_mult,
     input subtraindo,
-    input start,
-    output reg [27:0] dout,
-    output reg finish
+    output [4:0] bits_mult_reg,
+    output [27:0] dout
 );
 
-/* Estados */
-reg [2:0] estado_atual;
-reg [2:0] prox_estado;
-parameter inicio = 0, somando = 1, teste_mult = 2, multiplicando = 3, fim = 4;
+
 
 
 /* Parâmetros da multiplicação */
-reg [4:0] bits_mult;
-reg [26:0] parcela_mult;
 
-wire [26:0] parcela_shift;
-assign parcela_shift = {b,3'b0} >> (23 - bits_mult);
+wire [27:0] parcela_shift;
+assign parcela_shift = {1'b0, b,3'b0} >> (23 - bits_mult_reg);
 
+wire [27:0] parcela_mult;
+assign parcela_mult = a[bits_mult_reg] ? parcela_shift : 0;
+wire [27:0] mult_reg;
+wire [27:0] mult_atual;
+assign mult_atual = mult_reg + parcela_mult; 
 
-/* Alternador de estado */
-always @ (posedge clk)
-    begin
-        estado_atual <= prox_estado;
-    end
-
-/* Processo de início da operação */
-always @ (posedge start)
-    begin
-        prox_estado <= inicio;
-        finish <= 0;
-    end
-
-/* Máquina de estado */
-always @ (estado_atual)
-    begin
-
-        case (estado_atual)
-
-            inicio:
-                begin
-                    if(start)
-                        begin
-                            finish <= 0;
-                            if(multiplica)
-                                begin
-                                    /* Iniciando os parâmetros da multiplicação */
-                                    prox_estado <= teste_mult;
-                                    bits_mult <= 0;
-                                    parcela_mult <= 0;
-                                    dout <= 0;
-
-                                end
-                            else
-                                prox_estado <= somando;
+wire [4:0] bits_atual;
+assign bits_atual = bits_mult_reg + 1;
 
 
-                        end
-                end
+Registrador #(28) mult (.din(mult_atual), .clk(clk), .load(load_mult), .dout(mult_reg));
+Registrador #(5) bits_mult (.din(bits_atual), .clk(clk), .load(load_bits_mult), .dout(bits_mult_reg));
 
-            somando:
-                begin
-                    /* Somando/subtraindo */
-                    if(subtraindo)
-                        dout <= {{1'b0,a} - {1'b0,b}, 3'b0};
-                    else
-                        dout <= {{1'b0,a} + {1'b0,b}, 3'b0};
-                    prox_estado <= fim;
 
-                end
-            
-            teste_mult:
-                begin
-                    /* Testando para obter a operação atual
-                       da multiplicação */
-                    if(bits_mult > 23)
-                        prox_estado <= fim;
-                    else
-                        begin
-                            if(a[bits_mult] == 0)
-                                parcela_mult <= 0;
-                            else
-                                begin
-                                    parcela_mult <= parcela_shift; 
-                                end
-                            prox_estado <= multiplicando;
-                        end
-                    
-                end
-            
-            multiplicando:
-                begin
-                    /* Adicionando as parcelas da multiplicação */
-                    dout <= dout + {1'b0,parcela_mult};
-                    bits_mult <= bits_mult + 1;
-                    prox_estado <= teste_mult;
+/* Saída */
+assign dout = multiplicando ? mult_reg :
+              subtraindo ? a > b ?
+              {{1'b0,a} - {1'b0,b}, 3'b0} :
+              {{1'b0,b} - {1'b0,a}, 3'b0} :
+              {{1'b0,a} + {1'b0,b}, 3'b0};
 
-                end
-
-            fim:
-                begin
-                    /* Enviando a flag de finalizado */
-                    finish <= 1;
-                end
-
-        endcase
-
-    end
 
 endmodule
 
 
 module Arrendonda(
+    input clk,
+
     input [27:0] fract_in,
+    input [7:0] exp_in,
+
+    input multiplicando,
     input [7:0] reg_exp,
-    input [7:0] maior_exp,
+
     input [23:0] fract_a,
     input [23:0] fract_b,
     input sinal_a,
     input sinal_b,
-    input multiplicando,
-    input sinal_op,
-    input start,
-    input clk,
-    output reg finish,
-    output        sinal_s,
-    output reg [7:0] exp_arr,
-    output [22:0] fract_s
+    
+    output c_out,
+    output c_out_arr,
+
+    output [27:0] fract_atual,
+    output [7:0] exp_s,
+
+    output [31:0] s
 );
 
-reg [27:0] fract_atual;
+wire [22:0] fract_s;
+wire sinal_s;
 
+wire [25:0] fract_arredondado;
 
+/* Arredondamento Round-to-Even */
+assign fract_arredondado = fract_atual[27:3] + fract_atual[2];
 
-/* Alternador de estado */
-always @ (posedge clk)
-    begin
-        estado_atual <= prox_estado;
-    end
+assign c_out = fract_atual[27];
+assign c_out_arr = fract_arredondado[25];
 
-always @ (posedge start) 
-    begin
-        prox_estado <= inicio;
-        finish <= 0;
-    end
-
-
-reg [1:0] estado_atual, prox_estado;
-parameter inicio = 0, opera1 = 1, opera2 = 2, fim = 3;
-
-always @ (estado_atual)
-begin
-case(estado_atual)
-        inicio:
-            begin
-                prox_estado <= opera1;
-                exp_arr <= maior_exp;
-                fract_atual <= fract_in;
-            end 
-        opera1:
-            begin
-                if(fract_atual[27])
-                    begin
-                        prox_estado <= fim;
-                        exp_arr <= exp_arr + 1;
-                    end
-                else
-                    begin
-                        prox_estado <= opera2;
-                        exp_arr <= exp_arr - 1;
-                        fract_atual <= fract_atual << 1;
-                    end
-                
-            end
-        opera2:
-            begin
-                if(fract_atual[27])
-                    begin
-                        prox_estado <= fim;
-                        exp_arr <= exp_arr + 1;
-                    end
-                else
-                    begin
-                        prox_estado <= opera1;
-                        exp_arr <= exp_arr - 1;
-                        fract_atual <= fract_atual << 1;
-                    end
-                
-            end
-
-        fim:
-            begin
-                finish <= 1;
-            end
-endcase
-end
-wire c_out;
-assign c_out = fract_in[27];
-
-assign sinal_s = multiplicando ? sinal_op : 
+assign sinal_s = multiplicando ? (sinal_a ^ sinal_b) : 
        reg_exp[7] ? sinal_b : 
        reg_exp === 0 ? (fract_a > fract_b ? sinal_a : sinal_b) :
        sinal_a;
 
-/* Arredondando a saída */
-assign fract_s = fract_atual[26:4] ;
+
+
+Registrador #(28) fract_arr(.din(fract_in), .clk(clk), .load(1'b1), .dout(fract_atual));
+Registrador #(8) exp_arr(.din(exp_in), .clk(clk), .load(1'b1), .dout(exp_s));
+
+
+assign fract_s = fract_arredondado[23:1];
+wire [7:0] exp_real;
+assign exp_real = multiplicando ? (reg_exp + fract_in[27] + 127) : (exp_s + 128);
+assign s = {sinal_s, exp_real, fract_s};
 
 endmodule
