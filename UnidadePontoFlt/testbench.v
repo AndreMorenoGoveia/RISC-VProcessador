@@ -16,10 +16,11 @@ begin
     $dumpvars(0, testbench);
 
     clk <= 0;
-    a <= 32'b01000010011110000000000000000000;//0.987
-    b <= 32'b01000011011110010000000000000000;//1.02
+    rst <= 0;
+    a <= 32'b00111111101001100110011001100110;//0.987
+    b <= 32'b10111111101100110011001100110011;//1.02
     #1000 
-    opcode <= 2'b10;
+    opcode <= 2'b00;
     #10
     start <= 1;
     
@@ -31,8 +32,8 @@ end
 always #500 clk <= ~clk;
 
 
-FPUnit FP(.clk(clk), .rst(rst), .a(a), .b(b), .start(start),
-                   .opcode(opcode), .s(s),
+fpu FP(.clk(clk), .rst(rst), .A(a), .B(b), .start(start),
+                   .op(opcode), .R(s),
                    .done(done));
 
 

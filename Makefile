@@ -50,7 +50,7 @@ AMBIENTE = Ambiente.v $(PRO) $(MEM)
 
 
 # Floating Point
-FP = UnidadePontoFlt/testbench.v UnidadePontoFlt/FPUnit.v
+FP = UnidadePontoFlt/testbench.v UnidadePontoFlt/fpu.v
 
 riscv:
 	iverilog -o riscv.out $(AMBIENTE)
